@@ -174,7 +174,7 @@
         background: rgba(255, 255, 255, 0.04);
         border: 1px solid rgba(255, 255, 255, 0.07);
         border-radius: 16px;
-        padding: 10px 6px;
+        padding: 8px;
         text-align: center;
         cursor: pointer;
         transition: all 0.15s ease;
@@ -182,7 +182,7 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        justify-content: space-between;
       }
 
       .flower-card:active {
@@ -190,14 +190,24 @@
         background: rgba(255, 255, 255, 0.12);
       }
 
-      .flower-img {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        object-fit: cover;
+      .flower-img-container {
+        width: 100%;
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border-radius: 10px;
         margin-bottom: 6px;
-        border: 1px solid rgba(255, 255, 255, 0.15);
         background: rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        min-height: 0;
+      }
+
+      .flower-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
       }
 
       .flower-name {
@@ -209,12 +219,14 @@
         text-overflow: ellipsis;
         color: rgba(255, 255, 255, 0.9);
         width: 100%;
+        flex-shrink: 0;
       }
 
       .flower-price {
         font-size: 0.78rem;
         color: #94a3b8;
         font-weight: 600;
+        flex-shrink: 0;
       }
 
       .badge {
@@ -232,6 +244,7 @@
         align-items: center;
         justify-content: center;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        z-index: 2;
       }
 
       /* Standard Number Pad Grid */
@@ -700,7 +713,9 @@
 
           card.innerHTML = `
                 ${count > 0 ? `<div class="badge">${count}</div>` : ''}
-                <img src="${flower.img}" alt="${flower.name}" class="flower-img" onerror="this.src='https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=150'">
+                <div class="flower-img-container">
+                  <img src="${flower.img}" alt="${flower.name}" class="flower-img" onerror="this.src='https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=150'">
+                </div>
                 <div class="flower-name">${flower.name}</div>
                 <div class="flower-price">${flower.price} QAR</div>
             `;
