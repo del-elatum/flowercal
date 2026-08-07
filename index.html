@@ -21,24 +21,26 @@
           #0f1115 100%
         );
         color: #ffffff;
-        min-height: 100vh;
+        height: 100vh;
+        height: 100dvh;
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 10px;
+        padding: 6px;
+        overflow: hidden;
       }
 
       .calculator-container {
         width: 100%;
         max-width: 520px;
-        height: 94vh;
-        max-height: 850px;
+        height: 100%;
+        max-height: 100vh;
         background: rgba(255, 255, 255, 0.03);
         backdrop-filter: blur(25px);
         -webkit-backdrop-filter: blur(25px);
         border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 24px;
-        padding: 16px;
+        border-radius: 20px;
+        padding: 10px 12px;
         box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
         display: flex;
         flex-direction: column;
@@ -49,11 +51,11 @@
       .mode-switcher {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 8px;
-        margin-bottom: 12px;
+        gap: 6px;
+        margin-bottom: 8px;
         background: rgba(0, 0, 0, 0.2);
-        padding: 4px;
-        border-radius: 16px;
+        padding: 3px;
+        border-radius: 14px;
         border: 1px solid rgba(255, 255, 255, 0.05);
         flex-shrink: 0;
       }
@@ -61,10 +63,10 @@
       .mode-btn {
         background: transparent;
         border: none;
-        border-radius: 12px;
-        padding: 8px;
+        border-radius: 10px;
+        padding: 6px;
         color: rgba(255, 255, 255, 0.6);
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.2s ease;
@@ -79,24 +81,25 @@
       .display-panel {
         background: rgba(0, 0, 0, 0.4);
         border: 1px solid rgba(255, 255, 255, 0.06);
-        border-radius: 16px;
-        padding: 12px 16px;
-        margin-bottom: 12px;
+        border-radius: 14px;
+        padding: 8px 12px;
+        margin-bottom: 8px;
         text-align: right;
         position: relative;
         flex-shrink: 0;
       }
 
       .total-amount {
-        font-size: 2rem;
+        font-size: 1.7rem;
         font-weight: 700;
         color: #ffffff;
         letter-spacing: 0.5px;
         word-break: break-all;
+        line-height: 1.2;
       }
 
       .total-label {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         color: rgba(255, 255, 255, 0.5);
         text-transform: uppercase;
         letter-spacing: 1px;
@@ -104,10 +107,10 @@
       }
 
       .items-summary {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         color: #cbd5e1;
-        margin-top: 4px;
-        min-height: 18px;
+        margin-top: 2px;
+        min-height: 16px;
         overflow-x: auto;
         white-space: nowrap;
       }
@@ -126,10 +129,10 @@
       /* Category Filter Tabs */
       .category-tabs {
         display: flex;
-        gap: 8px;
+        gap: 6px;
         overflow-x: auto;
-        margin-bottom: 12px;
-        padding-bottom: 4px;
+        margin-bottom: 8px;
+        padding-bottom: 2px;
         scrollbar-width: none;
         flex-shrink: 0;
       }
@@ -141,10 +144,10 @@
       .tab-btn {
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 20px;
-        padding: 6px 12px;
+        border-radius: 16px;
+        padding: 5px 10px;
         color: rgba(255, 255, 255, 0.7);
-        font-size: 0.78rem;
+        font-size: 0.75rem;
         font-weight: 500;
         cursor: pointer;
         white-space: nowrap;
@@ -159,9 +162,9 @@
 
       .flower-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
         gap: 8px;
-        margin-bottom: 12px;
+        margin-bottom: 8px;
         overflow-y: auto;
         padding-right: 2px;
         flex-grow: 1;
@@ -171,7 +174,7 @@
         background: rgba(255, 255, 255, 0.04);
         border: 1px solid rgba(255, 255, 255, 0.07);
         border-radius: 12px;
-        padding: 8px;
+        padding: 6px;
         text-align: center;
         cursor: pointer;
         transition: all 0.15s ease;
@@ -188,19 +191,19 @@
       }
 
       .flower-img {
-        width: 40px;
-        height: 40px;
+        width: 48px;
+        height: 48px;
         border-radius: 50%;
         object-fit: cover;
-        margin-bottom: 4px;
+        margin-bottom: 3px;
         border: 1px solid rgba(255, 255, 255, 0.15);
         background: rgba(0, 0, 0, 0.2);
       }
 
       .flower-name {
-        font-size: 0.72rem;
+        font-size: 0.75rem;
         font-weight: 500;
-        margin-bottom: 2px;
+        margin-bottom: 1px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -231,21 +234,28 @@
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
       }
 
+      /* Landscape adjustments for grid */
+      @media (min-width: 600px) or (orientation: landscape) {
+        .flower-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+
       /* Standard Number Pad Grid */
       .number-pad {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 8px;
-        margin-bottom: 12px;
+        gap: 6px;
+        margin-bottom: 8px;
         flex-grow: 1;
       }
 
       .num-btn {
         background: rgba(255, 255, 255, 0.06);
         border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 12px;
+        border-radius: 10px;
         color: white;
-        font-size: 1rem;
+        font-size: 0.95rem;
         font-weight: 600;
         cursor: pointer;
         transition: background 0.15s;
@@ -272,17 +282,17 @@
       .action-buttons {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 8px;
+        gap: 6px;
         flex-shrink: 0;
       }
 
       .btn {
         background: rgba(255, 255, 255, 0.06);
         border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        padding: 10px;
+        border-radius: 10px;
+        padding: 8px;
         color: white;
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         font-weight: 500;
         cursor: pointer;
         transition: background 0.2s;
@@ -302,14 +312,14 @@
       /* History Modal Styles */
       .history-btn {
         position: absolute;
-        top: 10px;
-        left: 10px;
+        top: 8px;
+        left: 8px;
         background: rgba(255, 255, 255, 0.08);
         border: 1px solid rgba(255, 255, 255, 0.15);
-        border-radius: 8px;
-        padding: 4px 8px;
+        border-radius: 6px;
+        padding: 3px 6px;
         color: #cbd5e1;
-        font-size: 0.7rem;
+        font-size: 0.65rem;
         font-weight: 600;
         cursor: pointer;
         transition: background 0.2s;
@@ -736,7 +746,7 @@
         let grandTotal = flowerTotal + manualBase;
         let summaryCounts = {};
 
-        selectedFlowers.forEach((id) => {
+        selectedFlowers.expanded = selectedFlowers.forEach((id) => {
           const flower = flowers.find((f) => f.id === id);
           summaryCounts[flower.name] = (summaryCounts[flower.name] || 0) + 1;
         });
