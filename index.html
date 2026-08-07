@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>The Crochet Garden - Flower Calculator</title>
     <style>
       * {
@@ -25,19 +25,24 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        padding: 15px;
+        padding: 10px;
       }
 
       .calculator-container {
         width: 100%;
         max-width: 520px;
+        height: 94vh;
+        max-height: 850px;
         background: rgba(255, 255, 255, 0.03);
         backdrop-filter: blur(25px);
         -webkit-backdrop-filter: blur(25px);
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 24px;
-        padding: 20px;
+        padding: 16px;
         box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
       }
 
       /* Mode Switcher Tabs */
@@ -45,18 +50,19 @@
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 8px;
-        margin-bottom: 16px;
+        margin-bottom: 12px;
         background: rgba(0, 0, 0, 0.2);
         padding: 4px;
         border-radius: 16px;
         border: 1px solid rgba(255, 255, 255, 0.05);
+        flex-shrink: 0;
       }
 
       .mode-btn {
         background: transparent;
         border: none;
         border-radius: 12px;
-        padding: 10px;
+        padding: 8px;
         color: rgba(255, 255, 255, 0.6);
         font-size: 0.85rem;
         font-weight: 600;
@@ -74,14 +80,15 @@
         background: rgba(0, 0, 0, 0.4);
         border: 1px solid rgba(255, 255, 255, 0.06);
         border-radius: 16px;
-        padding: 16px;
-        margin-bottom: 16px;
+        padding: 12px 16px;
+        margin-bottom: 12px;
         text-align: right;
         position: relative;
+        flex-shrink: 0;
       }
 
       .total-amount {
-        font-size: 2.3rem;
+        font-size: 2rem;
         font-weight: 700;
         color: #ffffff;
         letter-spacing: 0.5px;
@@ -89,28 +96,31 @@
       }
 
       .total-label {
-        font-size: 0.8rem;
+        font-size: 0.75rem;
         color: rgba(255, 255, 255, 0.5);
         text-transform: uppercase;
         letter-spacing: 1px;
-        margin-bottom: 4px;
+        margin-bottom: 2px;
       }
 
       .items-summary {
-        font-size: 0.85rem;
+        font-size: 0.8rem;
         color: #cbd5e1;
-        margin-top: 6px;
-        min-height: 20px;
+        margin-top: 4px;
+        min-height: 18px;
         overflow-x: auto;
         white-space: nowrap;
       }
 
       .calc-view {
         display: none;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow: hidden;
       }
 
       .calc-view.active {
-        display: block;
+        display: flex;
       }
 
       /* Category Filter Tabs */
@@ -118,9 +128,10 @@
         display: flex;
         gap: 8px;
         overflow-x: auto;
-        margin-bottom: 14px;
+        margin-bottom: 12px;
         padding-bottom: 4px;
         scrollbar-width: none;
+        flex-shrink: 0;
       }
 
       .category-tabs::-webkit-scrollbar {
@@ -131,9 +142,9 @@
         background: rgba(255, 255, 255, 0.05);
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 20px;
-        padding: 8px 14px;
+        padding: 6px 12px;
         color: rgba(255, 255, 255, 0.7);
-        font-size: 0.8rem;
+        font-size: 0.78rem;
         font-weight: 500;
         cursor: pointer;
         white-space: nowrap;
@@ -149,22 +160,26 @@
       .flower-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-        margin-bottom: 16px;
-        max-height: 320px;
+        gap: 8px;
+        margin-bottom: 12px;
         overflow-y: auto;
-        padding-right: 4px;
+        padding-right: 2px;
+        flex-grow: 1;
       }
 
       .flower-card {
         background: rgba(255, 255, 255, 0.04);
         border: 1px solid rgba(255, 255, 255, 0.07);
-        border-radius: 14px;
-        padding: 10px;
+        border-radius: 12px;
+        padding: 8px;
         text-align: center;
         cursor: pointer;
         transition: all 0.15s ease;
         position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
       }
 
       .flower-card:active {
@@ -173,41 +188,42 @@
       }
 
       .flower-img {
-        width: 46px;
-        height: 46px;
+        width: 40px;
+        height: 40px;
         border-radius: 50%;
         object-fit: cover;
-        margin: 0 auto 6px auto;
+        margin-bottom: 4px;
         border: 1px solid rgba(255, 255, 255, 0.15);
         background: rgba(0, 0, 0, 0.2);
       }
 
       .flower-name {
-        font-size: 0.78rem;
+        font-size: 0.72rem;
         font-weight: 500;
         margin-bottom: 2px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
         color: rgba(255, 255, 255, 0.9);
+        width: 100%;
       }
 
       .flower-price {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         color: #94a3b8;
         font-weight: 600;
       }
 
       .badge {
         position: absolute;
-        top: 6px;
-        right: 6px;
+        top: 4px;
+        right: 4px;
         background: #ffffff;
         color: #0d0f12;
-        font-size: 0.65rem;
+        font-size: 0.6rem;
         font-weight: bold;
-        width: 18px;
-        height: 18px;
+        width: 16px;
+        height: 16px;
         border-radius: 50%;
         display: flex;
         align-items: center;
@@ -219,21 +235,23 @@
       .number-pad {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 10px;
-        margin-bottom: 16px;
+        gap: 8px;
+        margin-bottom: 12px;
+        flex-grow: 1;
       }
 
       .num-btn {
         background: rgba(255, 255, 255, 0.06);
         border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 14px;
-        padding: 16px 0;
+        border-radius: 12px;
         color: white;
-        font-size: 1.1rem;
+        font-size: 1rem;
         font-weight: 600;
         cursor: pointer;
         transition: background 0.15s;
-        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .num-btn:active {
@@ -254,16 +272,17 @@
       .action-buttons {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 10px;
+        gap: 8px;
+        flex-shrink: 0;
       }
 
       .btn {
         background: rgba(255, 255, 255, 0.06);
         border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 12px;
-        padding: 12px;
+        padding: 10px;
         color: white;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         font-weight: 500;
         cursor: pointer;
         transition: background 0.2s;
@@ -283,14 +302,14 @@
       /* History Modal Styles */
       .history-btn {
         position: absolute;
-        top: 12px;
-        left: 12px;
+        top: 10px;
+        left: 10px;
         background: rgba(255, 255, 255, 0.08);
         border: 1px solid rgba(255, 255, 255, 0.15);
-        border-radius: 10px;
-        padding: 6px 10px;
+        border-radius: 8px;
+        padding: 4px 8px;
         color: #cbd5e1;
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         font-weight: 600;
         cursor: pointer;
         transition: background 0.2s;
@@ -390,20 +409,6 @@
         color: rgba(255, 255, 255, 0.4);
         padding: 20px;
         font-size: 0.85rem;
-      }
-
-      @media (orientation: landscape) and (max-height: 600px) {
-        body {
-          align-items: flex-start;
-          padding: 10px;
-        }
-        .calculator-container {
-          max-width: 650px;
-        }
-        .flower-grid {
-          grid-template-columns: repeat(5, 1fr);
-          max-height: 160px;
-        }
       }
     </style>
   </head>
@@ -545,7 +550,7 @@
       let currentMode = 'flowers';
       let manualBase = 0;   
       let calcExpression = ''; 
-      let calculationHistory = []; // Stores recent equations and results
+      let calculationHistory = [];
 
       function switchMode(mode) {
         currentMode = mode;
@@ -615,11 +620,9 @@
             let fTotal = getFlowerTotal();
             manualBase = Number(result) - fTotal;
             
-            // Log equation and result into history (avoid duplicate consecutive identical entries)
             let historyEntry = `${originalExpr} = ${result} QAR`;
             if (calculationHistory.length === 0 || calculationHistory[0].result !== historyEntry) {
               calculationHistory.unshift({ expr: originalExpr, result: result + ' QAR' });
-              // Keep only the last 15 items
               if (calculationHistory.length > 15) calculationHistory.pop();
             }
 
