@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Crochet Garden - Flower Calculator</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+          Helvetica, Arial, sans-serif;
+      }
+
+      body {
+        background: linear-gradient(
+          135deg,
+          #0d0f12 0%,
+          #171a21 50%,
+          #0f1115 100%
+        );
+        color: #ffffff;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 15px;
+      }
+
+      .calculator-container {
+        width: 100%;
+        max-width: 520px;
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 24px;
+        padding: 20px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+      }
+
+      /* Mode Switcher Tabs */
+      .mode-switcher {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 16px;
+        background: rgba(0, 0, 0, 0.2);
+        padding: 4px;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+
+      .mode-btn {
+        background: transparent;
+        border: none;
+        border-radius: 12px;
+        padding: 10px;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.85rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .mode-btn.active {
+        background: rgba(255, 255, 255, 0.12);
+        color: #ffffff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      }
+
+      .display-panel {
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 16px;
+        padding: 16px;
+        margin-bottom: 16px;
+        text-align: right;
+        position: relative;
+      }
+
+      .total-amount {
+        font-size: 2.3rem;
+        font-weight: 700;
+        color: #ffffff;
+        letter-spacing: 0.5px;
+        word-break: break-all;
+      }
+
+      .total-label {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.5);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 4px;
+      }
+
+      .items-summary {
+        font-size: 0.85rem;
+        color: #cbd5e1;
+        margin-top: 6px;
+        min-height: 20px;
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+
+      .calc-view {
+        display: none;
+      }
+
+      .calc-view.active {
+        display: block;
+      }
+
+      /* Category Filter Tabs */
+      .category-tabs {
+        display: flex;
+        gap: 8px;
+        overflow-x: auto;
+        margin-bottom: 14px;
+        padding-bottom: 4px;
+        scrollbar-width: none;
+      }
+
+      .category-tabs::-webkit-scrollbar {
+        display: none;
+      }
+
+      .tab-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 20px;
+        padding: 8px 14px;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.8rem;
+        font-weight: 500;
+        cursor: pointer;
+        white-space: nowrap;
+        transition: all 0.2s ease;
+      }
+
+      .tab-btn.active {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.3);
+        color: #ffffff;
+      }
+
+      .flower-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 16px;
+        max-height: 320px;
+        overflow-y: auto;
+        padding-right: 4px;
+      }
+
+      .flower-card {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 14px;
+        padding: 10px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        position: relative;
+      }
+
+      .flower-card:active {
+        transform: scale(0.96);
+        background: rgba(255, 255, 255, 0.12);
+      }
+
+      .flower-img {
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        object-fit: cover;
+        margin: 0 auto 6px auto;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        background: rgba(0, 0, 0, 0.2);
+      }
+
+      .flower-name {
+        font-size: 0.78rem;
+        font-weight: 500;
+        margin-bottom: 2px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: rgba(255, 255, 255, 0.9);
+      }
+
+      .flower-price {
+        font-size: 0.75rem;
+        color: #94a3b8;
+        font-weight: 600;
+      }
+
+      .badge {
+        position: absolute;
+        top: 6px;
+        right: 6px;
+        background: #ffffff;
+        color: #0d0f12;
+        font-size: 0.65rem;
+        font-weight: bold;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      /* Standard Number Pad Grid */
+      .number-pad {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+
+      .num-btn {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 14px;
+        padding: 16px 0;
+        color: white;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.15s;
+        text-align: center;
+      }
+
+      .num-btn:active {
+        transform: scale(0.95);
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .num-btn.operator {
+        background: rgba(148, 163, 184, 0.15);
+        color: #cbd5e1;
+      }
+
+      .num-btn.equals {
+        background: rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+      }
+
+      .action-buttons {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .btn {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 12px;
+        color: white;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.2s;
+        text-align: center;
+      }
+
+      .btn-danger {
+        background: rgba(239, 68, 68, 0.12);
+        border-color: rgba(239, 68, 68, 0.2);
+        color: #fca5a5;
+      }
+
+      .btn:active {
+        transform: scale(0.98);
+      }
+
+      /* History Modal Styles */
+      .history-btn {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 10px;
+        padding: 6px 10px;
+        color: #cbd5e1;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+
+      .history-btn:hover {
+        background: rgba(255, 255, 255, 0.15);
+        color: #fff;
+      }
+
+      .history-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(5px);
+        justify-content: center;
+        align-items: center;
+        z-index: 100;
+        padding: 20px;
+      }
+
+      .history-modal.active {
+        display: flex;
+      }
+
+      .history-content {
+        background: #171a21;
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 20px;
+        width: 100%;
+        max-width: 400px;
+        max-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+      }
+
+      .history-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding-bottom: 10px;
+      }
+
+      .history-header h3 {
+        font-size: 1rem;
+        color: #ffffff;
+      }
+
+      .close-history {
+        background: transparent;
+        border: none;
+        color: #fca5a5;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .history-list {
+        overflow-y: auto;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding-right: 4px;
+      }
+
+      .history-item {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 12px;
+        padding: 10px 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.85rem;
+      }
+
+      .history-expr {
+        color: #94a3b8;
+      }
+
+      .history-res {
+        color: #ffffff;
+        font-weight: 600;
+      }
+
+      .empty-history {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.4);
+        padding: 20px;
+        font-size: 0.85rem;
+      }
+
+      @media (orientation: landscape) and (max-height: 600px) {
+        body {
+          align-items: flex-start;
+          padding: 10px;
+        }
+        .calculator-container {
+          max-width: 650px;
+        }
+        .flower-grid {
+          grid-template-columns: repeat(5, 1fr);
+          max-height: 160px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="calculator-container">
+      <!-- Mode Switcher -->
+      <div class="mode-switcher">
+        <button class="mode-btn active" id="flowerModeBtn" onclick="switchMode('flowers')">Flower Mode</button>
+        <button class="mode-btn" id="standardModeBtn" onclick="switchMode('standard')">Standard Calc</button>
+      </div>
+
+      <!-- Display Panel -->
+      <div class="display-panel">
+        <button class="history-btn" onclick="toggleHistory(true)">🕒 History</button>
+        <div class="total-label" id="displayLabel">Bouquet Total</div>
+        <div class="total-amount" id="totalDisplay">0 QAR</div>
+        <div class="items-summary" id="itemsSummary">
+          Tap flowers below to add
+        </div>
+      </div>
+
+      <!-- VIEW 1: FLOWER CALCULATOR -->
+      <div class="calc-view active" id="flowerView">
+        <div class="category-tabs" id="categoryTabs">
+          <button class="tab-btn active" onclick="filterCategory('ALL')">All Flowers</button>
+          <button class="tab-btn" onclick="filterCategory('BASE')">Base</button>
+          <button class="tab-btn" onclick="filterCategory('PREMIUM')">Premium</button>
+          <button class="tab-btn" onclick="filterCategory('SPROUTS')">Sprouts</button>
+          <button class="tab-btn" onclick="filterCategory('LEAVES')">Leaves</button>
+        </div>
+
+        <div class="flower-grid" id="flowerGrid"></div>
+
+        <div class="action-buttons">
+          <button class="btn btn-danger" onclick="resetAll()">Clear All</button>
+          <button class="btn" onclick="undoLast()">Undo Last</button>
+        </div>
+      </div>
+
+      <!-- VIEW 2: STANDARD NUMERICAL CALCULATOR -->
+      <div class="calc-view" id="standardView">
+        <div class="number-pad">
+          <button class="num-btn operator" onclick="clearCalc()">C</button>
+          <button class="num-btn operator" onclick="appendInput('(')">(</button>
+          <button class="num-btn operator" onclick="appendInput(')')">)</button>
+          <button class="num-btn operator" onclick="appendInput('/')">÷</button>
+          
+          <button class="num-btn" onclick="appendInput('7')">7</button>
+          <button class="num-btn" onclick="appendInput('8')">8</button>
+          <button class="num-btn" onclick="appendInput('9')">9</button>
+          <button class="num-btn operator" onclick="appendInput('*')">×</button>
+          
+          <button class="num-btn" onclick="appendInput('4')">4</button>
+          <button class="num-btn" onclick="appendInput('5')">5</button>
+          <button class="num-btn" onclick="appendInput('6')">6</button>
+          <button class="num-btn operator" onclick="appendInput('-')">-</button>
+          
+          <button class="num-btn" onclick="appendInput('1')">1</button>
+          <button class="num-btn" onclick="appendInput('2')">2</button>
+          <button class="num-btn" onclick="appendInput('3')">3</button>
+          <button class="num-btn operator" onclick="appendInput('+')">+</button>
+          
+          <button class="num-btn" onclick="appendInput('0')">0</button>
+          <button class="num-btn" onclick="appendInput('.')">.</button>
+          <button class="num-btn operator" onclick="backspaceInput()">⌫</button>
+          <button class="num-btn equals" onclick="calculateResult()">=</button>
+        </div>
+        <div class="action-buttons">
+          <button class="btn btn-danger" onclick="resetAll()">Clear All</button>
+          <button class="btn" onclick="backspaceInput()">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- History Modal Popup -->
+    <div class="history-modal" id="historyModal">
+      <div class="history-content">
+        <div class="history-header">
+          <h3>Calculation History</h3>
+          <button class="close-history" onclick="toggleHistory(false)">✕ Close</button>
+        </div>
+        <div class="history-list" id="historyList">
+          <div class="empty-history">No recent calculations yet</div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const baseUrl = 'https://raw.githubusercontent.com/del-elatum/flowercal/refs/heads/main/';
+
+      const flowers = [
+        // BASE
+        { id: 1, name: 'Daisy', price: 23, category: 'BASE', img: baseUrl + 'daisy.png' },
+        { id: 2, name: 'Garden Rose', price: 30, category: 'BASE', img: baseUrl + 'gardenrose.png' },
+        { id: 3, name: 'Tulip', price: 30, category: 'BASE', img: baseUrl + 'tulip.png' },
+        { id: 4, name: 'Carnation', price: 30, category: 'BASE', img: baseUrl + 'carnation.png' },
+        { id: 5, name: 'Long-Stem Rose', price: 38, category: 'BASE', img: baseUrl + 'longstemrose.png' },
+        { id: 6, name: 'Cosmos', price: 38, category: 'BASE', img: baseUrl + 'cosmos.png' },
+        { id: 7, name: 'Calla Lily', price: 29, category: 'BASE', img: baseUrl + 'callalily.png' },
+        { id: 8, name: 'Lavender', price: 29, category: 'BASE', img: baseUrl + 'lavender.png' },
+        { id: 9, name: 'Poppy', price: 39, category: 'BASE', img: baseUrl + 'poppy.png' },
+        { id: 10, name: 'Toy', price: 38, category: 'BASE', img: baseUrl + 'toy.png' },
+        { id: 11, name: 'Graduation Girl', price: 40, category: 'BASE', img: baseUrl + 'graduationgirl.png' },
+
+        // PREMIUM
+        { id: 12, name: 'Daylily', price: 43, category: 'PREMIUM', img: baseUrl + 'daylily.png' },
+        { id: 13, name: 'Large Rose', price: 43, category: 'PREMIUM', img: baseUrl + 'largerose.png' },
+        { id: 14, name: 'Water Lily', price: 40, category: 'PREMIUM', img: baseUrl + 'waterlily.png' },
+        { id: 15, name: 'Large Daisy', price: 43, category: 'PREMIUM', img: baseUrl + 'largedaisy.png' },
+        { id: 16, name: 'Sunflower', price: 41, category: 'PREMIUM', img: baseUrl + 'sunflower.png' },
+        { id: 17, name: 'Silk Flower', price: 41, category: 'PREMIUM', img: baseUrl + 'silkflower.png' },
+        { id: 18, name: 'Glaze Flower', price: 41, category: 'PREMIUM', img: baseUrl + 'glazeflower.png' },
+        { id: 19, name: 'Silent Princess', price: 41, category: 'PREMIUM', img: baseUrl + 'silentprincess.png' },
+        { id: 20, name: 'Lewisia', price: 41, category: 'PREMIUM', img: baseUrl + 'lewisia.png' },
+        { id: 21, name: 'Iris', price: 38, category: 'PREMIUM', img: baseUrl + 'iris.png' },
+        { id: 22, name: 'Lily', price: 38, category: 'PREMIUM', img: baseUrl + 'lily.png' },
+
+        // SPROUTS
+        { id: 23, name: 'Larkspur', price: 43, category: 'SPROUTS', img: baseUrl + 'larkspur.png' },
+        { id: 24, name: 'Forsythia', price: 42, category: 'SPROUTS', img: baseUrl + 'forsythia.png' },
+        { id: 25, name: 'Ipomoea', price: 42, category: 'SPROUTS', img: baseUrl + 'Ipomoea.png' },
+        { id: 26, name: 'Spray Rose', price: 43, category: 'SPROUTS', img: baseUrl + 'sprayrose.png' },
+        { id: 27, name: 'Sakura', price: 41, category: 'SPROUTS', img: baseUrl + 'sakura.png' },
+        { id: 28, name: 'Cherry Blossom', price: 41, category: 'SPROUTS', img: baseUrl + 'cherryblossom.png' },
+        { id: 29, name: 'Star Lily', price: 41, category: 'SPROUTS', img: baseUrl + 'starlily.png' },
+        { id: 30, name: 'Gladiolus', price: 39, category: 'SPROUTS', img: baseUrl + 'gladiolus.png' },
+        { id: 31, name: 'Heather', price: 29, category: 'SPROUTS', img: baseUrl + 'heather.png' },
+        { id: 32, name: 'Forget-Me-Not', price: 27, category: 'SPROUTS', img: baseUrl + 'forgetmenot.png' },
+        { id: 33, name: 'Lily of the Valley', price: 39, category: 'SPROUTS', img: baseUrl + 'lilyofthevalley.png' },
+
+        // LEAVES
+        { id: 34, name: 'Eucalyptus', price: 29, category: 'LEAVES', img: baseUrl + 'eucalyptus.png' },
+        { id: 35, name: 'Botanical Leaf', price: 30, category: 'LEAVES', img: baseUrl + 'botanicalleaf.png' },
+        { id: 36, name: 'Monstera Leaf', price: 31, category: 'LEAVES', img: baseUrl + 'monsteraleaf.png' }
+      ];
+
+      let selectedFlowers = [];
+      let currentCategory = 'ALL';
+      let currentMode = 'flowers';
+      let manualBase = 0;   
+      let calcExpression = ''; 
+      let calculationHistory = []; // Stores recent equations and results
+
+      function switchMode(mode) {
+        currentMode = mode;
+        const flowerView = document.getElementById('flowerView');
+        const standardView = document.getElementById('standardView');
+        const flowerBtn = document.getElementById('flowerModeBtn');
+        const standardBtn = document.getElementById('standardModeBtn');
+
+        let currentTotal = getFlowerTotal() + manualBase;
+
+        if (mode === 'flowers') {
+          flowerView.classList.add('active');
+          standardView.classList.remove('active');
+          flowerBtn.classList.add('active');
+          standardBtn.classList.remove('active');
+          
+          calcExpression = String(currentTotal);
+        } else {
+          standardView.classList.add('active');
+          flowerView.classList.remove('active');
+          standardBtn.classList.add('active');
+          flowerBtn.classList.remove('active');
+
+          if (calcExpression === '' || calcExpression === '0') {
+            calcExpression = String(currentTotal);
+          }
+        }
+        updateDisplay();
+      }
+
+      function getFlowerTotal() {
+        let total = 0;
+        selectedFlowers.forEach((id) => {
+          const flower = flowers.find((f) => f.id === id);
+          total += flower.price;
+        });
+        return total;
+      }
+
+      function appendInput(val) {
+        if (calcExpression === 'Error') {
+          calcExpression = '';
+        }
+        calcExpression += val;
+        updateDisplay();
+      }
+
+      function clearCalc() {
+        manualBase = 0;
+        calcExpression = String(getFlowerTotal());
+        updateDisplay();
+      }
+
+      function backspaceInput() {
+        if (calcExpression.length > 0) {
+          calcExpression = calcExpression.slice(0, -1);
+        }
+        updateDisplay();
+      }
+
+      function calculateResult() {
+        try {
+          let originalExpr = calcExpression;
+          let sanitized = calcExpression.replace(/×/g, '*').replace(/÷/g, '/');
+          let result = eval(sanitized);
+          if (isFinite(result)) {
+            let fTotal = getFlowerTotal();
+            manualBase = Number(result) - fTotal;
+            
+            // Log equation and result into history (avoid duplicate consecutive identical entries)
+            let historyEntry = `${originalExpr} = ${result} QAR`;
+            if (calculationHistory.length === 0 || calculationHistory[0].result !== historyEntry) {
+              calculationHistory.unshift({ expr: originalExpr, result: result + ' QAR' });
+              // Keep only the last 15 items
+              if (calculationHistory.length > 15) calculationHistory.pop();
+            }
+
+            calcExpression = String(result);
+          } else {
+            calcExpression = 'Error';
+          }
+        } catch (e) {
+          calcExpression = 'Error';
+        }
+        updateDisplay();
+      }
+
+      function toggleHistory(show) {
+        const modal = document.getElementById('historyModal');
+        if (show) {
+          renderHistoryList();
+          modal.classList.add('active');
+        } else {
+          modal.classList.remove('active');
+        }
+      }
+
+      function renderHistoryList() {
+        const listContainer = document.getElementById('historyList');
+        listContainer.innerHTML = '';
+
+        if (calculationHistory.length === 0) {
+          listContainer.innerHTML = '<div class="empty-history">No recent calculations yet</div>';
+          return;
+        }
+
+        calculationHistory.forEach(item => {
+          const row = document.createElement('div');
+          row.className = 'history-item';
+          row.innerHTML = `
+            <span class="history-expr">${item.expr}</span>
+            <span class="history-res">${item.result}</span>
+          `;
+          listContainer.appendChild(row);
+        });
+      }
+
+      function filterCategory(category) {
+        currentCategory = category;
+        document.querySelectorAll('.tab-btn').forEach((btn) => {
+          btn.classList.remove('active');
+          if (btn.innerText.toUpperCase().includes(category.split(' ')[0])) {
+            btn.classList.add('active');
+          }
+        });
+        if (category === 'ALL') {
+          document.querySelector('.tab-btn').classList.add('active');
+        }
+        renderFlowers();
+      }
+
+      function renderFlowers() {
+        const grid = document.getElementById('flowerGrid');
+        grid.innerHTML = '';
+
+        const filteredFlowers =
+          currentCategory === 'ALL'
+            ? flowers
+            : flowers.filter((f) => f.category === currentCategory);
+
+        filteredFlowers.forEach((flower) => {
+          const count = selectedFlowers.filter((id) => id === flower.id).length;
+          const card = document.createElement('div');
+          card.className = 'flower-card';
+          card.onclick = () => addFlower(flower.id);
+
+          card.innerHTML = `
+                ${count > 0 ? `<div class="badge">${count}</div>` : ''}
+                <img src="${flower.img}" alt="${flower.name}" class="flower-img" onerror="this.src='https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=150'">
+                <div class="flower-name">${flower.name}</div>
+                <div class="flower-price">${flower.price} QAR</div>
+            `;
+          grid.appendChild(card);
+        });
+      }
+
+      function addFlower(id) {
+        selectedFlowers.push(id);
+        let grandTotal = getFlowerTotal() + manualBase;
+        calcExpression = String(grandTotal);
+        updateDisplay();
+        renderFlowers();
+      }
+
+      function undoLast() {
+        if (selectedFlowers.length > 0) {
+          selectedFlowers.pop();
+          let grandTotal = getFlowerTotal() + manualBase;
+          calcExpression = String(grandTotal);
+          updateDisplay();
+          renderFlowers();
+        }
+      }
+
+      function resetAll() {
+        selectedFlowers = [];
+        manualBase = 0;
+        calcExpression = '';
+        updateDisplay();
+        renderFlowers();
+      }
+
+      function updateDisplay() {
+        let flowerTotal = getFlowerTotal();
+        let grandTotal = flowerTotal + manualBase;
+        let summaryCounts = {};
+
+        selectedFlowers.forEach((id) => {
+          const flower = flowers.find((f) => f.id === id);
+          summaryCounts[flower.name] = (summaryCounts[flower.name] || 0) + 1;
+        });
+
+        if (currentMode === 'flowers') {
+          document.getElementById('displayLabel').innerText = 'Bouquet Total';
+          document.getElementById('totalDisplay').innerText = grandTotal + ' QAR';
+          calcExpression = String(grandTotal);
+        } else {
+          document.getElementById('displayLabel').innerText = 'Standard Calculator';
+          document.getElementById('totalDisplay').innerText = (calcExpression !== '' ? calcExpression : grandTotal) + ' QAR';
+        }
+
+        const summaryArray = Object.keys(summaryCounts).map(
+          (name) => `${summaryCounts[name]}x ${name}`
+        );
+        let summaryText = summaryArray.length > 0 ? summaryArray.join(' + ') : 'Tap flowers below to add';
+        if (manualBase !== 0) {
+          summaryText += summaryArray.length > 0 ? ` (Custom Adj: ${manualBase > 0 ? '+' + manualBase : manualBase} QAR)` : `Custom Value (${manualBase} QAR)`;
+        }
+        document.getElementById('itemsSummary').innerText = summaryText;
+      }
+
+      renderFlowers();
+    </script>
+  </body>
+</html>
