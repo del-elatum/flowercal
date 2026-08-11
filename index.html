@@ -120,6 +120,14 @@
         white-space: nowrap;
       }
 
+      .flower-total-count {
+        font-size: 0.85rem;
+        color: #cbd5e1;
+        margin-top: 4px;
+        min-height: 18px;
+        white-space: nowrap;
+      }
+
       .calc-view {
         display: none;
         flex-direction: column;
@@ -344,14 +352,6 @@
         color: #fff;
       }
 
-      /*
-        NEW:
-        Complete button.
-
-        It sits inside the existing display panel so it does NOT
-        change the flower grid, flower sizes, or bottom buttons.
-      */
-
       .complete-btn {
         position: absolute;
         top: 12px;
@@ -436,12 +436,6 @@
         padding-right: 4px;
       }
 
-      /*
-        The history card itself is allowed to stack vertically
-        so the full formula can actually be read.
-        This does not affect the calculator/flower layout.
-      */
-
       .history-item {
         background: rgba(255, 255, 255, 0.04);
         border: 1px solid rgba(255, 255, 255, 0.06);
@@ -515,8 +509,6 @@
           🕒 History
         </button>
 
-        <!-- NEW: Complete button only used in Flower Mode -->
-
         <button
           class="complete-btn"
           id="completeBtn"
@@ -544,6 +536,13 @@
           id="itemsSummary"
         >
           Tap flowers below to add
+        </div>
+
+        <div
+          class="flower-total-count"
+          id="flowerTotalCount"
+        >
+          Total Flowers: 0
         </div>
 
       </div>
@@ -604,8 +603,6 @@
           id="flowerGrid"
         ></div>
 
-
-        <!-- ORIGINAL BUTTON LAYOUT - UNCHANGED -->
 
         <div class="action-buttons">
 
@@ -1170,13 +1167,6 @@
       let calculationHistory = [];
 
 
-      /*
-        SWITCH BETWEEN FLOWER MODE AND STANDARD CALCULATOR
-
-        This preserves the original behavior where both calculators
-        share the same running total.
-      */
-
       function switchMode(mode) {
 
         currentMode = mode;
@@ -1212,14 +1202,7 @@
 
           standardBtn.classList.remove('active');
 
-
-          /*
-            Complete is specifically for the Flower tab,
-            so only show it here.
-          */
-
           completeBtn.style.display = 'block';
-
 
           calcExpression =
             String(currentTotal);
@@ -1233,7 +1216,6 @@
           standardBtn.classList.add('active');
 
           flowerBtn.classList.remove('active');
-
 
           completeBtn.style.display = 'none';
 
@@ -1255,10 +1237,6 @@
 
       }
 
-
-      /*
-        CALCULATE THE PRICE OF ALL CURRENTLY SELECTED FLOWERS
-      */
 
       function getFlowerTotal() {
 
@@ -1285,29 +1263,12 @@
       }
 
 
-      /*
-        NEW #3:
-        TOTAL NUMBER OF FLOWERS
-
-        Because selectedFlowers contains one ID for every flower
-        added, its length is the exact total quantity.
-      */
-
       function getTotalFlowerCount() {
 
         return selectedFlowers.length;
 
       }
 
-
-      /*
-        NEW #1:
-        BUILD A READABLE FULL FLOWER FORMULA.
-
-        Example:
-
-        2x Daisy (23 QAR each) + 1x Tulip (30 QAR)
-      */
 
       function getFlowerFormula() {
 
@@ -1377,11 +1338,6 @@
       }
 
 
-      /*
-        SHARED FUNCTION FOR SAVING COMPLETED CALCULATIONS
-        TO HISTORY.
-      */
-
       function saveToHistory(expression, result) {
 
         const flowerCount =
@@ -1398,11 +1354,6 @@
 
         };
 
-
-        /*
-          Avoid saving the exact same calculation twice
-          consecutively.
-        */
 
         const previousEntry =
           calculationHistory[0];
@@ -1432,10 +1383,6 @@
 
       }
 
-
-      /*
-        STANDARD CALCULATOR INPUT
-      */
 
       function appendInput(val) {
 
@@ -1486,14 +1433,6 @@
       }
 
 
-      /*
-        STANDARD CALCULATOR =
-
-        NEW:
-        When "=" is pressed, History now stores the complete
-        flower formula as well as the numerical calculation.
-      */
-
       function calculateResult() {
 
         try {
@@ -1529,11 +1468,6 @@
             let fullFormula =
               originalExpr;
 
-
-            /*
-              If flowers are part of this calculation,
-              include the entire flower formula first.
-            */
 
             if (flowerFormula) {
 
@@ -1572,19 +1506,7 @@
       }
 
 
-      /*
-        NEW #2:
-        COMPLETE BUTTON FOR FLOWER MODE.
-
-        This saves the bouquet to History WITHOUT needing
-        to switch to Standard Calc and press "=".
-      */
-
       function completeFlowerCalculation() {
-
-        /*
-          Don't save a completely empty bouquet.
-        */
 
         if (
           selectedFlowers.length === 0 &&
@@ -1607,11 +1529,6 @@
         let fullFormula =
           flowerFormula;
 
-
-        /*
-          If Standard Calc previously added/subtracted something,
-          preserve that adjustment as part of the completed formula.
-        */
 
         if (manualBase !== 0) {
 
@@ -1645,11 +1562,6 @@
         );
 
 
-        /*
-          Small confirmation using the existing button only.
-          It does not move or resize anything.
-        */
-
         const completeBtn =
           document.getElementById('completeBtn');
 
@@ -1667,10 +1579,6 @@
 
       }
 
-
-      /*
-        HISTORY MODAL
-      */
 
       function toggleHistory(show) {
 
@@ -1698,15 +1606,6 @@
 
       }
 
-
-      /*
-        NEW:
-        History now shows:
-
-        - Entire formula
-        - Total flower quantity
-        - Final result
-      */
 
       function renderHistoryList() {
 
@@ -1772,10 +1671,6 @@
       }
 
 
-      /*
-        CATEGORY FILTERING
-      */
-
       function filterCategory(category) {
 
         currentCategory =
@@ -1829,12 +1724,6 @@
 
       }
 
-
-      /*
-        FLOWER GRID
-
-        This is your original rendering/layout logic.
-      */
 
       function renderFlowers() {
 
@@ -1924,10 +1813,6 @@
       }
 
 
-      /*
-        ADD A FLOWER
-      */
-
       function addFlower(id) {
 
         selectedFlowers.push(id);
@@ -1947,10 +1832,6 @@
 
       }
 
-
-      /*
-        REMOVE LAST FLOWER
-      */
 
       function undoLast() {
 
@@ -1978,10 +1859,6 @@
       }
 
 
-      /*
-        CLEAR EVERYTHING
-      */
-
       function resetAll() {
 
         selectedFlowers = [];
@@ -1997,19 +1874,6 @@
 
       }
 
-
-      /*
-        UPDATE DISPLAY
-
-        Original display behavior remains intact.
-
-        NEW #3:
-        "Total Flowers: X" is simply added to the existing
-        items-summary line.
-
-        No new row/container is added, so the flower grid
-        does not get resized.
-      */
 
       function updateDisplay() {
 
@@ -2119,28 +1983,19 @@
         }
 
 
-        /*
-          NEW:
-          Add total quantity to the SAME EXISTING LINE.
-          This means no extra element takes height away from
-          your flower cards.
-        */
-
-        summaryText +=
-          ` • Total Flowers: ${getTotalFlowerCount()}`;
-
-
         document.getElementById(
           'itemsSummary'
         ).innerText =
           summaryText;
 
+
+        document.getElementById(
+          'flowerTotalCount'
+        ).innerText =
+          `Total Flowers: ${getTotalFlowerCount()}`;
+
       }
 
-
-      /*
-        INITIAL LOAD
-      */
 
       renderFlowers();
 
