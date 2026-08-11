@@ -1,784 +1,2931 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>The Crochet Garden - Flower Calculator</title>
-    <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-          Helvetica, Arial, sans-serif;
-      }
+<head>
+  <meta charset="UTF-8" />
 
-      body {
-        background: linear-gradient(
-          135deg,
-          #0d0f12 0%,
-          #171a21 50%,
-          #0f1115 100%
-        );
-        color: #ffffff;
-        height: 100vh;
-        height: 100dvh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 0;
-        overflow: hidden;
-      }
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  />
 
+  <title>The Crochet Garden - Flower Calculator</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
+    }
+
+    body {
+      background: linear-gradient(
+        135deg,
+        #0d0f12 0%,
+        #171a21 50%,
+        #0f1115 100%
+      );
+
+      color: #ffffff;
+
+      height: 100vh;
+      height: 100dvh;
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      overflow: hidden;
+    }
+
+    button {
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    /* =========================================================
+       MAIN CALCULATOR
+       ========================================================= */
+
+    .calculator-container {
+      width: 100%;
+      height: 100%;
+
+      background: rgba(255, 255, 255, 0.03);
+
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+
+      padding: 12px;
+
+      display: flex;
+      flex-direction: column;
+
+      overflow: hidden;
+    }
+
+    /* =========================================================
+       MODE SWITCHER
+       ========================================================= */
+
+    .mode-switcher {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+
+      gap: 8px;
+
+      margin-bottom: 10px;
+      padding: 4px;
+
+      background: rgba(0, 0, 0, 0.2);
+
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 16px;
+
+      flex-shrink: 0;
+    }
+
+    .mode-btn {
+      background: transparent;
+      border: none;
+      border-radius: 12px;
+
+      padding: 10px;
+
+      color: rgba(255, 255, 255, 0.6);
+
+      font-size: 0.9rem;
+      font-weight: 600;
+
+      cursor: pointer;
+
+      transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.15s ease;
+    }
+
+    .mode-btn.active {
+      background: rgba(255, 255, 255, 0.12);
+
+      color: #ffffff;
+
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .mode-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* =========================================================
+       DISPLAY
+       ========================================================= */
+
+    .display-panel {
+      position: relative;
+
+      background: rgba(0, 0, 0, 0.4);
+
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+
+      padding: 12px 16px;
+
+      margin-bottom: 10px;
+
+      text-align: right;
+
+      flex-shrink: 0;
+    }
+
+    .history-btn {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+
+      background: rgba(255, 255, 255, 0.08);
+
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 8px;
+
+      padding: 5px 10px;
+
+      color: #cbd5e1;
+
+      font-size: 0.75rem;
+      font-weight: 600;
+
+      cursor: pointer;
+
+      transition: all 0.2s ease;
+    }
+
+    .history-btn:hover {
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+    }
+
+    .history-btn:active {
+      transform: scale(0.97);
+    }
+
+    .total-label {
+      font-size: 0.75rem;
+
+      color: rgba(255, 255, 255, 0.5);
+
+      text-transform: uppercase;
+
+      letter-spacing: 1px;
+
+      margin-bottom: 2px;
+    }
+
+    .total-amount {
+      font-size: 2.1rem;
+      font-weight: 700;
+
+      color: #ffffff;
+
+      letter-spacing: 0.5px;
+
+      word-break: break-word;
+
+      line-height: 1.2;
+    }
+
+    .items-summary {
+      font-size: 0.85rem;
+
+      color: #cbd5e1;
+
+      margin-top: 5px;
+
+      min-height: 18px;
+
+      overflow-x: auto;
+
+      white-space: nowrap;
+
+      scrollbar-width: none;
+    }
+
+    .items-summary::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* NEW - Live Flower Count */
+
+    .flower-count-display {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+
+      gap: 7px;
+
+      margin-top: 7px;
+
+      color: rgba(255, 255, 255, 0.65);
+
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .flower-count-number {
+      min-width: 28px;
+      height: 28px;
+
+      padding: 0 8px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      background: rgba(255, 255, 255, 0.14);
+
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 14px;
+
+      color: #ffffff;
+
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    /* =========================================================
+       CALCULATOR VIEWS
+       ========================================================= */
+
+    .calc-view {
+      display: none;
+
+      flex-direction: column;
+
+      flex-grow: 1;
+
+      min-height: 0;
+
+      overflow: hidden;
+    }
+
+    .calc-view.active {
+      display: flex;
+    }
+
+    /* =========================================================
+       FLOWER CATEGORY TABS
+       ========================================================= */
+
+    .category-tabs {
+      display: flex;
+
+      gap: 8px;
+
+      overflow-x: auto;
+
+      margin-bottom: 10px;
+      padding-bottom: 2px;
+
+      scrollbar-width: none;
+
+      flex-shrink: 0;
+    }
+
+    .category-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tab-btn {
+      background: rgba(255, 255, 255, 0.05);
+
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+
+      padding: 8px 14px;
+
+      color: rgba(255, 255, 255, 0.7);
+
+      font-size: 0.85rem;
+      font-weight: 500;
+
+      cursor: pointer;
+
+      white-space: nowrap;
+
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn.active {
+      background: rgba(255, 255, 255, 0.15);
+
+      border-color: rgba(255, 255, 255, 0.3);
+
+      color: #ffffff;
+    }
+
+    .tab-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* =========================================================
+       FLOWER GRID
+       ========================================================= */
+
+    .flower-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+
+      gap: 10px;
+
+      margin-bottom: 10px;
+
+      overflow-y: auto;
+
+      padding-right: 2px;
+
+      flex-grow: 1;
+      min-height: 0;
+    }
+
+    .flower-card {
+      position: relative;
+
+      background: rgba(255, 255, 255, 0.04);
+
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 16px;
+
+      padding: 8px;
+
+      text-align: center;
+
+      cursor: pointer;
+
+      transition: all 0.15s ease;
+
+      display: flex;
+      flex-direction: column;
+
+      align-items: center;
+      justify-content: space-between;
+
+      min-height: 0;
+    }
+
+    .flower-card:active {
+      transform: scale(0.96);
+
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .flower-img-container {
+      width: 100%;
+
+      flex-grow: 1;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      overflow: hidden;
+
+      border-radius: 10px;
+
+      margin-bottom: 6px;
+
+      background: rgba(0, 0, 0, 0.2);
+
+      border: 1px solid rgba(255, 255, 255, 0.08);
+
+      min-height: 0;
+    }
+
+    .flower-img {
+      width: 100%;
+      height: 100%;
+
+      object-fit: contain;
+    }
+
+    .flower-name {
+      width: 100%;
+
+      font-size: 0.82rem;
+      font-weight: 500;
+
+      margin-bottom: 2px;
+
+      white-space: nowrap;
+
+      overflow: hidden;
+      text-overflow: ellipsis;
+
+      color: rgba(255, 255, 255, 0.9);
+
+      flex-shrink: 0;
+    }
+
+    .flower-price {
+      font-size: 0.78rem;
+      font-weight: 600;
+
+      color: #94a3b8;
+
+      flex-shrink: 0;
+    }
+
+    /* Quantity badge on each flower */
+
+    .badge {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+
+      background: #ffffff;
+      color: #0d0f12;
+
+      font-size: 0.7rem;
+      font-weight: 800;
+
+      min-width: 22px;
+      height: 22px;
+
+      padding: 0 5px;
+
+      border-radius: 50px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
+
+      z-index: 2;
+    }
+
+    /* =========================================================
+       STANDARD CALCULATOR
+       ========================================================= */
+
+    .number-pad {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+
+      gap: 8px;
+
+      margin-bottom: 10px;
+
+      flex-grow: 1;
+      min-height: 0;
+    }
+
+    .num-btn {
+      background: rgba(255, 255, 255, 0.06);
+
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+
+      color: #ffffff;
+
+      font-size: 1.2rem;
+      font-weight: 600;
+
+      cursor: pointer;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      transition:
+        background 0.15s ease,
+        transform 0.15s ease;
+    }
+
+    .num-btn:active {
+      transform: scale(0.95);
+
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .num-btn.operator {
+      background: rgba(148, 163, 184, 0.15);
+
+      color: #cbd5e1;
+    }
+
+    .num-btn.equals {
+      background: rgba(255, 255, 255, 0.2);
+
+      color: #ffffff;
+
+      font-weight: 800;
+    }
+
+    /* =========================================================
+       BOTTOM ACTION BUTTONS
+       ========================================================= */
+
+    .action-buttons {
+      display: grid;
+
+      grid-template-columns: 1fr 1fr;
+
+      gap: 8px;
+
+      flex-shrink: 0;
+    }
+
+    /* Flower mode has 3 buttons */
+
+    .flower-action-buttons {
+      grid-template-columns: 1fr 1fr 1.15fr;
+    }
+
+    .btn {
+      background: rgba(255, 255, 255, 0.06);
+
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 14px;
+
+      padding: 14px 8px;
+
+      color: #ffffff;
+
+      font-size: 0.9rem;
+      font-weight: 600;
+
+      cursor: pointer;
+
+      transition:
+        background 0.2s ease,
+        transform 0.15s ease;
+
+      text-align: center;
+    }
+
+    .btn:active {
+      transform: scale(0.97);
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.12);
+
+      border-color: rgba(239, 68, 68, 0.2);
+
+      color: #fca5a5;
+    }
+
+    /* NEW - Complete button */
+
+    .btn-complete {
+      background: rgba(255, 255, 255, 0.16);
+
+      border-color: rgba(255, 255, 255, 0.22);
+
+      color: #ffffff;
+
+      font-weight: 750;
+    }
+
+    .btn-complete:active {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    /* =========================================================
+       COMPLETE CONFIRMATION
+       ========================================================= */
+
+    .complete-message {
+      position: fixed;
+
+      left: 50%;
+      bottom: 28px;
+
+      transform: translate(-50%, 20px);
+
+      background: rgba(255, 255, 255, 0.95);
+
+      color: #111318;
+
+      padding: 10px 16px;
+
+      border-radius: 12px;
+
+      font-size: 0.82rem;
+      font-weight: 700;
+
+      opacity: 0;
+      pointer-events: none;
+
+      transition:
+        opacity 0.2s ease,
+        transform 0.2s ease;
+
+      z-index: 200;
+
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+    }
+
+    .complete-message.show {
+      opacity: 1;
+
+      transform: translate(-50%, 0);
+    }
+
+    /* =========================================================
+       HISTORY MODAL
+       ========================================================= */
+
+    .history-modal {
+      display: none;
+
+      position: fixed;
+
+      top: 0;
+      left: 0;
+
+      width: 100%;
+      height: 100%;
+
+      background: rgba(0, 0, 0, 0.72);
+
+      backdrop-filter: blur(7px);
+      -webkit-backdrop-filter: blur(7px);
+
+      justify-content: center;
+      align-items: center;
+
+      z-index: 100;
+
+      padding: 20px;
+    }
+
+    .history-modal.active {
+      display: flex;
+    }
+
+    .history-content {
+      background: #171a21;
+
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 20px;
+
+      width: 100%;
+      max-width: 430px;
+      max-height: 82vh;
+
+      display: flex;
+      flex-direction: column;
+
+      padding: 20px;
+
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+    }
+
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      margin-bottom: 15px;
+
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+      padding-bottom: 10px;
+
+      flex-shrink: 0;
+    }
+
+    .history-header h3 {
+      font-size: 1rem;
+
+      color: #ffffff;
+    }
+
+    .close-history {
+      background: transparent;
+
+      border: none;
+
+      color: #fca5a5;
+
+      font-size: 0.9rem;
+      font-weight: 700;
+
+      cursor: pointer;
+    }
+
+    .history-list {
+      overflow-y: auto;
+
+      flex-grow: 1;
+
+      display: flex;
+      flex-direction: column;
+
+      gap: 10px;
+
+      padding-right: 4px;
+    }
+
+    /* NEW - larger history cards */
+
+    .history-item {
+      background: rgba(255, 255, 255, 0.045);
+
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      border-radius: 14px;
+
+      padding: 12px 14px;
+    }
+
+    .history-item-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 10px;
+
+      margin-bottom: 8px;
+    }
+
+    .history-type {
+      color: #cbd5e1;
+
+      font-size: 0.7rem;
+      font-weight: 700;
+
+      text-transform: uppercase;
+
+      letter-spacing: 0.7px;
+    }
+
+    .history-count {
+      background: rgba(255, 255, 255, 0.1);
+
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50px;
+
+      padding: 3px 8px;
+
+      color: #ffffff;
+
+      font-size: 0.7rem;
+      font-weight: 700;
+    }
+
+    .history-formula-label {
+      color: rgba(255, 255, 255, 0.42);
+
+      font-size: 0.68rem;
+      font-weight: 650;
+
+      text-transform: uppercase;
+
+      letter-spacing: 0.5px;
+
+      margin-bottom: 3px;
+    }
+
+    .history-formula {
+      color: #cbd5e1;
+
+      font-size: 0.82rem;
+
+      line-height: 1.45;
+
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .history-standard-formula {
+      margin-top: 8px;
+
+      padding-top: 8px;
+
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .history-result {
+      margin-top: 10px;
+
+      padding-top: 9px;
+
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      gap: 12px;
+    }
+
+    .history-result-label {
+      color: rgba(255, 255, 255, 0.48);
+
+      font-size: 0.75rem;
+    }
+
+    .history-result-value {
+      color: #ffffff;
+
+      font-size: 1rem;
+      font-weight: 750;
+    }
+
+    .empty-history {
+      text-align: center;
+
+      color: rgba(255, 255, 255, 0.4);
+
+      padding: 30px 20px;
+
+      font-size: 0.85rem;
+    }
+
+    /* =========================================================
+       SMALL SCREEN ADJUSTMENTS
+       ========================================================= */
+
+    @media (max-width: 420px) {
       .calculator-container {
-        width: 100%;
-        height: 100%;
-        max-width: 100%;
-        max-height: 100%;
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(25px);
-        -webkit-backdrop-filter: blur(25px);
-        border: none;
-        border-radius: 0;
-        padding: 12px;
-        box-shadow: none;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-      }
-
-      /* Mode Switcher Tabs */
-      .mode-switcher {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-        margin-bottom: 10px;
-        background: rgba(0, 0, 0, 0.2);
-        padding: 4px;
-        border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        flex-shrink: 0;
-      }
-
-      .mode-btn {
-        background: transparent;
-        border: none;
-        border-radius: 12px;
         padding: 10px;
-        color: rgba(255, 255, 255, 0.6);
-        font-size: 0.9rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-      }
-
-      .mode-btn.active {
-        background: rgba(255, 255, 255, 0.12);
-        color: #ffffff;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      }
-
-      .display-panel {
-        background: rgba(0, 0, 0, 0.4);
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        border-radius: 16px;
-        padding: 12px 16px;
-        margin-bottom: 10px;
-        text-align: right;
-        position: relative;
-        flex-shrink: 0;
       }
 
       .total-amount {
-        font-size: 2.1rem;
-        font-weight: 700;
-        color: #ffffff;
-        letter-spacing: 0.5px;
-        word-break: break-all;
-        line-height: 1.2;
-      }
-
-      .total-label {
-        font-size: 0.75rem;
-        color: rgba(255, 255, 255, 0.5);
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 2px;
-      }
-
-      .items-summary {
-        font-size: 0.85rem;
-        color: #cbd5e1;
-        margin-top: 4px;
-        min-height: 18px;
-        overflow-x: auto;
-        white-space: nowrap;
-      }
-
-      .calc-view {
-        display: none;
-        flex-direction: column;
-        flex-grow: 1;
-        overflow: hidden;
-      }
-
-      .calc-view.active {
-        display: flex;
-      }
-
-      /* Category Filter Tabs */
-      .category-tabs {
-        display: flex;
-        gap: 8px;
-        overflow-x: auto;
-        margin-bottom: 10px;
-        padding-bottom: 2px;
-        scrollbar-width: none;
-        flex-shrink: 0;
-      }
-
-      .category-tabs::-webkit-scrollbar {
-        display: none;
-      }
-
-      .tab-btn {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 20px;
-        padding: 8px 14px;
-        color: rgba(255, 255, 255, 0.7);
-        font-size: 0.85rem;
-        font-weight: 500;
-        cursor: pointer;
-        white-space: nowrap;
-        transition: all 0.2s ease;
-      }
-
-      .tab-btn.active {
-        background: rgba(255, 255, 255, 0.15);
-        border-color: rgba(255, 255, 255, 0.3);
-        color: #ffffff;
+        font-size: 1.9rem;
       }
 
       .flower-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
-        margin-bottom: 10px;
-        overflow-y: auto;
-        padding-right: 2px;
-        flex-grow: 1;
+        gap: 8px;
       }
 
       .flower-card {
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.07);
-        border-radius: 16px;
-        padding: 8px;
-        text-align: center;
-        cursor: pointer;
-        transition: all 0.15s ease;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: space-between;
+        padding: 6px;
       }
 
-      .flower-card:active {
-        transform: scale(0.96);
-        background: rgba(255, 255, 255, 0.12);
+      .flower-action-buttons {
+        gap: 6px;
       }
 
-      .flower-img-container {
-        width: 100%;
-        flex-grow: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-        border-radius: 10px;
-        margin-bottom: 6px;
-        background: rgba(0, 0, 0, 0.2);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        min-height: 0;
+      .flower-action-buttons .btn {
+        padding: 13px 5px;
+
+        font-size: 0.8rem;
       }
+    }
+  </style>
+</head>
 
-      .flower-img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-      }
+<body>
 
-      .flower-name {
-        font-size: 0.82rem;
-        font-weight: 500;
-        margin-bottom: 2px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        color: rgba(255, 255, 255, 0.9);
-        width: 100%;
-        flex-shrink: 0;
-      }
+  <div class="calculator-container">
 
-      .flower-price {
-        font-size: 0.78rem;
-        color: #94a3b8;
-        font-weight: 600;
-        flex-shrink: 0;
-      }
+    <!-- =======================================================
+         MODE SWITCHER
+         ======================================================= -->
 
-      .badge {
-        position: absolute;
-        top: 6px;
-        right: 6px;
-        background: #ffffff;
-        color: #0d0f12;
-        font-size: 0.7rem;
-        font-weight: bold;
-        width: 20px;
-        height: 20px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        z-index: 2;
-      }
+    <div class="mode-switcher">
 
-      /* Standard Number Pad Grid */
-      .number-pad {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 8px;
-        margin-bottom: 10px;
-        flex-grow: 1;
-      }
+      <button
+        class="mode-btn active"
+        id="flowerModeBtn"
+        onclick="switchMode('flowers')"
+      >
+        Flower Mode
+      </button>
 
-      .num-btn {
-        background: rgba(255, 255, 255, 0.06);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 14px;
-        color: white;
-        font-size: 1.2rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background 0.15s;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
+      <button
+        class="mode-btn"
+        id="standardModeBtn"
+        onclick="switchMode('standard')"
+      >
+        Standard Calc
+      </button>
 
-      .num-btn:active {
-        transform: scale(0.95);
-        background: rgba(255, 255, 255, 0.2);
-      }
-
-      .num-btn.operator {
-        background: rgba(148, 163, 184, 0.15);
-        color: #cbd5e1;
-      }
-
-      .num-btn.equals {
-        background: rgba(255, 255, 255, 0.2);
-        color: #ffffff;
-      }
-
-      .action-buttons {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-        flex-shrink: 0;
-      }
-
-      .btn {
-        background: rgba(255, 255, 255, 0.06);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 14px;
-        padding: 14px;
-        color: white;
-        font-size: 0.95rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background 0.2s;
-        text-align: center;
-      }
-
-      .btn-danger {
-        background: rgba(239, 68, 68, 0.12);
-        border-color: rgba(239, 68, 68, 0.2);
-        color: #fca5a5;
-      }
-
-      .btn:active {
-        transform: scale(0.98);
-      }
-
-      /* History Modal Styles */
-      .history-btn {
-        position: absolute;
-        top: 12px;
-        left: 12px;
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        border-radius: 8px;
-        padding: 5px 10px;
-        color: #cbd5e1;
-        font-size: 0.75rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background 0.2s;
-      }
-
-      .history-btn:hover {
-        background: rgba(255, 255, 255, 0.15);
-        color: #fff;
-      }
-
-      .history-modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.7);
-        backdrop-filter: blur(5px);
-        justify-content: center;
-        align-items: center;
-        z-index: 100;
-        padding: 20px;
-      }
-
-      .history-modal.active {
-        display: flex;
-      }
-
-      .history-content {
-        background: #171a21;
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        border-radius: 20px;
-        width: 100%;
-        max-width: 400px;
-        max-height: 80vh;
-        display: flex;
-        flex-direction: column;
-        padding: 20px;
-        box-shadow: 0 20px 40px rgba(0,0,0,0.8);
-      }
-
-      .history-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 15px;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        padding-bottom: 10px;
-      }
-
-      .history-header h3 {
-        font-size: 1rem;
-        color: #ffffff;
-      }
-
-      .close-history {
-        background: transparent;
-        border: none;
-        color: #fca5a5;
-        font-size: 1rem;
-        font-weight: bold;
-        cursor: pointer;
-      }
-
-      .history-list {
-        overflow-y: auto;
-        flex-grow: 1;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
-        padding-right: 4px;
-      }
-
-      .history-item {
-        background: rgba(255, 255, 255, 0.04);
-        border: 1px solid rgba(255, 255, 255, 0.06);
-        border-radius: 12px;
-        padding: 10px 14px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.85rem;
-      }
-
-      .history-expr {
-        color: #94a3b8;
-      }
-
-      .history-res {
-        color: #ffffff;
-        font-weight: 600;
-      }
-
-      .empty-history {
-        text-align: center;
-        color: rgba(255, 255, 255, 0.4);
-        padding: 20px;
-        font-size: 0.85rem;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="calculator-container">
-      <!-- Mode Switcher -->
-      <div class="mode-switcher">
-        <button class="mode-btn active" id="flowerModeBtn" onclick="switchMode('flowers')">Flower Mode</button>
-        <button class="mode-btn" id="standardModeBtn" onclick="switchMode('standard')">Standard Calc</button>
-      </div>
-
-      <!-- Display Panel -->
-      <div class="display-panel">
-        <button class="history-btn" onclick="toggleHistory(true)">🕒 History</button>
-        <div class="total-label" id="displayLabel">Bouquet Total</div>
-        <div class="total-amount" id="totalDisplay">0 QAR</div>
-        <div class="items-summary" id="itemsSummary">
-          Tap flowers below to add
-        </div>
-      </div>
-
-      <!-- VIEW 1: FLOWER CALCULATOR -->
-      <div class="calc-view active" id="flowerView">
-        <div class="category-tabs" id="categoryTabs">
-          <button class="tab-btn active" onclick="filterCategory('ALL')">All Flowers</button>
-          <button class="tab-btn" onclick="filterCategory('BASE')">Base</button>
-          <button class="tab-btn" onclick="filterCategory('PREMIUM')">Premium</button>
-          <button class="tab-btn" onclick="filterCategory('SPROUTS')">Sprouts</button>
-          <button class="tab-btn" onclick="filterCategory('LEAVES')">Leaves</button>
-        </div>
-
-        <div class="flower-grid" id="flowerGrid"></div>
-
-        <div class="action-buttons">
-          <button class="btn btn-danger" onclick="resetAll()">Clear All</button>
-          <button class="btn" onclick="undoLast()">Undo Last</button>
-        </div>
-      </div>
-
-      <!-- VIEW 2: STANDARD NUMERICAL CALCULATOR -->
-      <div class="calc-view" id="standardView">
-        <div class="number-pad">
-          <button class="num-btn operator" onclick="clearCalc()">C</button>
-          <button class="num-btn operator" onclick="appendInput('(')">(</button>
-          <button class="num-btn operator" onclick="appendInput(')')">)</button>
-          <button class="num-btn operator" onclick="appendInput('/')">÷</button>
-          
-          <button class="num-btn" onclick="appendInput('7')">7</button>
-          <button class="num-btn" onclick="appendInput('8')">8</button>
-          <button class="num-btn" onclick="appendInput('9')">9</button>
-          <button class="num-btn operator" onclick="appendInput('*')">×</button>
-          
-          <button class="num-btn" onclick="appendInput('4')">4</button>
-          <button class="num-btn" onclick="appendInput('5')">5</button>
-          <button class="num-btn" onclick="appendInput('6')">6</button>
-          <button class="num-btn operator" onclick="appendInput('-')">-</button>
-          
-          <button class="num-btn" onclick="appendInput('1')">1</button>
-          <button class="num-btn" onclick="appendInput('2')">2</button>
-          <button class="num-btn" onclick="appendInput('3')">3</button>
-          <button class="num-btn operator" onclick="appendInput('+')">+</button>
-          
-          <button class="num-btn" onclick="appendInput('0')">0</button>
-          <button class="num-btn" onclick="appendInput('.')">.</button>
-          <button class="num-btn operator" onclick="backspaceInput()">⌫</button>
-          <button class="num-btn equals" onclick="calculateResult()">=</button>
-        </div>
-        <div class="action-buttons">
-          <button class="btn btn-danger" onclick="resetAll()">Clear All</button>
-          <button class="btn" onclick="backspaceInput()">Delete</button>
-        </div>
-      </div>
     </div>
 
-    <!-- History Modal Popup -->
-    <div class="history-modal" id="historyModal">
-      <div class="history-content">
-        <div class="history-header">
-          <h3>Calculation History</h3>
-          <button class="close-history" onclick="toggleHistory(false)">✕ Close</button>
-        </div>
-        <div class="history-list" id="historyList">
-          <div class="empty-history">No recent calculations yet</div>
-        </div>
+
+    <!-- =======================================================
+         DISPLAY PANEL
+         ======================================================= -->
+
+    <div class="display-panel">
+
+      <button
+        class="history-btn"
+        onclick="toggleHistory(true)"
+      >
+        🕒 History
+      </button>
+
+      <div
+        class="total-label"
+        id="displayLabel"
+      >
+        Bouquet Total
       </div>
+
+      <div
+        class="total-amount"
+        id="totalDisplay"
+      >
+        0 QAR
+      </div>
+
+      <div
+        class="items-summary"
+        id="itemsSummary"
+      >
+        Tap flowers below to add
+      </div>
+
+      <!-- NEW - total number of flowers -->
+      <div
+        class="flower-count-display"
+        id="flowerCountDisplay"
+      >
+        Total Flowers
+
+        <span
+          class="flower-count-number"
+          id="flowerCountNumber"
+        >
+          0
+        </span>
+      </div>
+
     </div>
 
-    <script>
-      const baseUrl = 'https://raw.githubusercontent.com/del-elatum/flowercal/refs/heads/main/';
 
-      const flowers = [
-        // BASE
-        { id: 1, name: 'Daisy', price: 23, category: 'BASE', img: baseUrl + 'daisy.png' },
-        { id: 2, name: 'Garden Rose', price: 30, category: 'BASE', img: baseUrl + 'gardenrose.png' },
-        { id: 3, name: 'Tulip', price: 30, category: 'BASE', img: baseUrl + 'tulip.png' },
-        { id: 4, name: 'Carnation', price: 30, category: 'BASE', img: baseUrl + 'carnation.png' },
-        { id: 5, name: 'Long-Stem Rose', price: 38, category: 'BASE', img: baseUrl + 'longstemrose.png' },
-        { id: 6, name: 'Cosmos', price: 38, category: 'BASE', img: baseUrl + 'cosmos.png' },
-        { id: 7, name: 'Calla Lily', price: 29, category: 'BASE', img: baseUrl + 'callalily.png' },
-        { id: 8, name: 'Lavender', price: 29, category: 'BASE', img: baseUrl + 'lavender.png' },
-        { id: 9, name: 'Toy', price: 38, category: 'BASE', img: baseUrl + 'toy.png' },
-        { id: 10, name: 'Graduation Girl', price: 40, category: 'BASE', img: baseUrl + 'graduationgirl.png' },
+    <!-- =======================================================
+         FLOWER CALCULATOR
+         ======================================================= -->
 
-        // PREMIUM (Poppy moved here)
-        { id: 11, name: 'Poppy', price: 39, category: 'PREMIUM', img: baseUrl + 'poppy.png' },
-        { id: 12, name: 'Daylily', price: 43, category: 'PREMIUM', img: baseUrl + 'daylily.png' },
-        { id: 13, name: 'Large Rose', price: 43, category: 'PREMIUM', img: baseUrl + 'largerose.png' },
-        { id: 14, name: 'Water Lily', price: 40, category: 'PREMIUM', img: baseUrl + 'waterlily.png' },
-        { id: 15, name: 'Large Daisy', price: 43, category: 'PREMIUM', img: baseUrl + 'largedaisy.png' },
-        { id: 16, name: 'Sunflower', price: 41, category: 'PREMIUM', img: baseUrl + 'sunflower.png' },
-        { id: 17, name: 'Silk Flower', price: 41, category: 'PREMIUM', img: baseUrl + 'silkflower.png' },
-        { id: 18, name: 'Glaze Flower', price: 41, category: 'PREMIUM', img: baseUrl + 'glazeflower.png' },
-        { id: 19, name: 'Silent Princess', price: 41, category: 'PREMIUM', img: baseUrl + 'silentprincess.png' },
-        { id: 20, name: 'Lewisia', price: 41, category: 'PREMIUM', img: baseUrl + 'lewisia.png' },
-        { id: 21, name: 'Iris', price: 38, category: 'PREMIUM', img: baseUrl + 'iris.png' },
-        { id: 22, name: 'Lily', price: 38, category: 'PREMIUM', img: baseUrl + 'lily.png' },
+    <div
+      class="calc-view active"
+      id="flowerView"
+    >
 
-        // SPROUTS
-        { id: 23, name: 'Larkspur', price: 43, category: 'SPROUTS', img: baseUrl + 'larkspur.png' },
-        { id: 24, name: 'Forsythia', price: 42, category: 'SPROUTS', img: baseUrl + 'forsythia.png' },
-        { id: 25, name: 'Ipomoea', price: 42, category: 'SPROUTS', img: baseUrl + 'Ipomoea.png' },
-        { id: 26, name: 'Spray Rose', price: 43, category: 'SPROUTS', img: baseUrl + 'sprayrose.png' },
-        { id: 27, name: 'Sakura', price: 41, category: 'SPROUTS', img: baseUrl + 'sakura.png' },
-        { id: 28, name: 'Cherry Blossom', price: 41, category: 'SPROUTS', img: baseUrl + 'cherryblossom.png' },
-        { id: 29, name: 'Star Lily', price: 41, category: 'SPROUTS', img: baseUrl + 'starlily.png' },
-        { id: 30, name: 'Gladiolus', price: 39, category: 'SPROUTS', img: baseUrl + 'gladiolus.png' },
-        { id: 31, name: 'Heather', price: 29, category: 'SPROUTS', img: baseUrl + 'heather.png' },
-        { id: 32, name: 'Forget-Me-Not', price: 27, category: 'SPROUTS', img: baseUrl + 'forgetmenot.png' },
-        { id: 33, name: 'Lily of the Valley', price: 39, category: 'SPROUTS', img: baseUrl + 'lilyofthevalley.png' },
+      <!-- Category Tabs -->
 
-        // LEAVES
-        { id: 34, name: 'Eucalyptus', price: 29, category: 'LEAVES', img: baseUrl + 'eucalyptus.png' },
-        { id: 35, name: 'Botanical Leaf', price: 30, category: 'LEAVES', img: baseUrl + 'botanicalleaf.png' },
-        { id: 36, name: 'Monstera Leaf', price: 31, category: 'LEAVES', img: baseUrl + 'monsteraleaf.png' }
-      ];
+      <div
+        class="category-tabs"
+        id="categoryTabs"
+      >
 
-      let selectedFlowers = [];
-      let currentCategory = 'ALL';
-      let currentMode = 'flowers';
-      let manualBase = 0;   
-      let calcExpression = ''; 
-      let calculationHistory = [];
+        <button
+          class="tab-btn active"
+          data-category="ALL"
+          onclick="filterCategory('ALL')"
+        >
+          All Flowers
+        </button>
 
-      function switchMode(mode) {
-        currentMode = mode;
-        const flowerView = document.getElementById('flowerView');
-        const standardView = document.getElementById('standardView');
-        const flowerBtn = document.getElementById('flowerModeBtn');
-        const standardBtn = document.getElementById('standardModeBtn');
+        <button
+          class="tab-btn"
+          data-category="BASE"
+          onclick="filterCategory('BASE')"
+        >
+          Base
+        </button>
 
-        let currentTotal = getFlowerTotal() + manualBase;
+        <button
+          class="tab-btn"
+          data-category="PREMIUM"
+          onclick="filterCategory('PREMIUM')"
+        >
+          Premium
+        </button>
 
-        if (mode === 'flowers') {
-          flowerView.classList.add('active');
-          standardView.classList.remove('active');
-          flowerBtn.classList.add('active');
-          standardBtn.classList.remove('active');
-          
-          calcExpression = String(currentTotal);
-        } else {
-          standardView.classList.add('active');
-          flowerView.classList.remove('active');
-          standardBtn.classList.add('active');
-          flowerBtn.classList.remove('active');
+        <button
+          class="tab-btn"
+          data-category="SPROUTS"
+          onclick="filterCategory('SPROUTS')"
+        >
+          Sprouts
+        </button>
 
-          if (calcExpression === '' || calcExpression === '0') {
-            calcExpression = String(currentTotal);
-          }
+        <button
+          class="tab-btn"
+          data-category="LEAVES"
+          onclick="filterCategory('LEAVES')"
+        >
+          Leaves
+        </button>
+
+      </div>
+
+
+      <!-- Flower Cards -->
+
+      <div
+        class="flower-grid"
+        id="flowerGrid"
+      ></div>
+
+
+      <!-- NEW - Complete button -->
+
+      <div class="action-buttons flower-action-buttons">
+
+        <button
+          class="btn btn-danger"
+          onclick="resetAll()"
+        >
+          Clear All
+        </button>
+
+        <button
+          class="btn"
+          onclick="undoLast()"
+        >
+          Undo Last
+        </button>
+
+        <button
+          class="btn btn-complete"
+          onclick="completeFlowerCalculation()"
+        >
+          ✓ Complete
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- =======================================================
+         STANDARD CALCULATOR
+         ======================================================= -->
+
+    <div
+      class="calc-view"
+      id="standardView"
+    >
+
+      <div class="number-pad">
+
+        <button
+          class="num-btn operator"
+          onclick="clearCalc()"
+        >
+          C
+        </button>
+
+        <button
+          class="num-btn operator"
+          onclick="appendInput('(')"
+        >
+          (
+        </button>
+
+        <button
+          class="num-btn operator"
+          onclick="appendInput(')')"
+        >
+          )
+        </button>
+
+        <button
+          class="num-btn operator"
+          onclick="appendInput('/')"
+        >
+          ÷
+        </button>
+
+
+        <button
+          class="num-btn"
+          onclick="appendInput('7')"
+        >
+          7
+        </button>
+
+        <button
+          class="num-btn"
+          onclick="appendInput('8')"
+        >
+          8
+        </button>
+
+        <button
+          class="num-btn"
+          onclick="appendInput('9')"
+        >
+          9
+        </button>
+
+        <button
+          class="num-btn operator"
+          onclick="appendInput('*')"
+        >
+          ×
+        </button>
+
+
+        <button
+          class="num-btn"
+          onclick="appendInput('4')"
+        >
+          4
+        </button>
+
+        <button
+          class="num-btn"
+          onclick="appendInput('5')"
+        >
+          5
+        </button>
+
+        <button
+          class="num-btn"
+          onclick="appendInput('6')"
+        >
+          6
+        </button>
+
+        <button
+          class="num-btn operator"
+          onclick="appendInput('-')"
+        >
+          −
+        </button>
+
+
+        <button
+          class="num-btn"
+          onclick="appendInput('1')"
+        >
+          1
+        </button>
+
+        <button
+          class="num-btn"
+          onclick="appendInput('2')"
+        >
+          2
+        </button>
+
+        <button
+          class="num-btn"
+          onclick="appendInput('3')"
+        >
+          3
+        </button>
+
+        <button
+          class="num-btn operator"
+          onclick="appendInput('+')"
+        >
+          +
+        </button>
+
+
+        <button
+          class="num-btn"
+          onclick="appendInput('0')"
+        >
+          0
+        </button>
+
+        <button
+          class="num-btn"
+          onclick="appendInput('.')"
+        >
+          .
+        </button>
+
+        <button
+          class="num-btn operator"
+          onclick="backspaceInput()"
+        >
+          ⌫
+        </button>
+
+        <button
+          class="num-btn equals"
+          onclick="calculateResult()"
+        >
+          =
+        </button>
+
+      </div>
+
+
+      <div class="action-buttons">
+
+        <button
+          class="btn btn-danger"
+          onclick="resetAll()"
+        >
+          Clear All
+        </button>
+
+        <button
+          class="btn"
+          onclick="backspaceInput()"
+        >
+          Delete
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================================================
+       HISTORY MODAL
+       ========================================================= -->
+
+  <div
+    class="history-modal"
+    id="historyModal"
+    onclick="closeHistoryFromBackdrop(event)"
+  >
+
+    <div class="history-content">
+
+      <div class="history-header">
+
+        <h3>Calculation History</h3>
+
+        <button
+          class="close-history"
+          onclick="toggleHistory(false)"
+        >
+          ✕ Close
+        </button>
+
+      </div>
+
+      <div
+        class="history-list"
+        id="historyList"
+      >
+
+        <div class="empty-history">
+          No recent calculations yet
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- Confirmation popup -->
+
+  <div
+    class="complete-message"
+    id="completeMessage"
+  >
+    ✓ Added to History
+  </div>
+
+
+  <script>
+
+    /* =========================================================
+       FLOWER DATA
+       ========================================================= */
+
+    const baseUrl =
+      "https://raw.githubusercontent.com/del-elatum/flowercal/refs/heads/main/";
+
+
+    const flowers = [
+
+      /* BASE */
+
+      {
+        id: 1,
+        name: "Daisy",
+        price: 23,
+        category: "BASE",
+        img: baseUrl + "daisy.png"
+      },
+
+      {
+        id: 2,
+        name: "Garden Rose",
+        price: 30,
+        category: "BASE",
+        img: baseUrl + "gardenrose.png"
+      },
+
+      {
+        id: 3,
+        name: "Tulip",
+        price: 30,
+        category: "BASE",
+        img: baseUrl + "tulip.png"
+      },
+
+      {
+        id: 4,
+        name: "Carnation",
+        price: 30,
+        category: "BASE",
+        img: baseUrl + "carnation.png"
+      },
+
+      {
+        id: 5,
+        name: "Long-Stem Rose",
+        price: 38,
+        category: "BASE",
+        img: baseUrl + "longstemrose.png"
+      },
+
+      {
+        id: 6,
+        name: "Cosmos",
+        price: 38,
+        category: "BASE",
+        img: baseUrl + "cosmos.png"
+      },
+
+      {
+        id: 7,
+        name: "Calla Lily",
+        price: 29,
+        category: "BASE",
+        img: baseUrl + "callalily.png"
+      },
+
+      {
+        id: 8,
+        name: "Lavender",
+        price: 29,
+        category: "BASE",
+        img: baseUrl + "lavender.png"
+      },
+
+      {
+        id: 9,
+        name: "Toy",
+        price: 38,
+        category: "BASE",
+        img: baseUrl + "toy.png"
+      },
+
+      {
+        id: 10,
+        name: "Graduation Girl",
+        price: 40,
+        category: "BASE",
+        img: baseUrl + "graduationgirl.png"
+      },
+
+
+      /* PREMIUM */
+
+      {
+        id: 11,
+        name: "Poppy",
+        price: 39,
+        category: "PREMIUM",
+        img: baseUrl + "poppy.png"
+      },
+
+      {
+        id: 12,
+        name: "Daylily",
+        price: 43,
+        category: "PREMIUM",
+        img: baseUrl + "daylily.png"
+      },
+
+      {
+        id: 13,
+        name: "Large Rose",
+        price: 43,
+        category: "PREMIUM",
+        img: baseUrl + "largerose.png"
+      },
+
+      {
+        id: 14,
+        name: "Water Lily",
+        price: 40,
+        category: "PREMIUM",
+        img: baseUrl + "waterlily.png"
+      },
+
+      {
+        id: 15,
+        name: "Large Daisy",
+        price: 43,
+        category: "PREMIUM",
+        img: baseUrl + "largedaisy.png"
+      },
+
+      {
+        id: 16,
+        name: "Sunflower",
+        price: 41,
+        category: "PREMIUM",
+        img: baseUrl + "sunflower.png"
+      },
+
+      {
+        id: 17,
+        name: "Silk Flower",
+        price: 41,
+        category: "PREMIUM",
+        img: baseUrl + "silkflower.png"
+      },
+
+      {
+        id: 18,
+        name: "Glaze Flower",
+        price: 41,
+        category: "PREMIUM",
+        img: baseUrl + "glazeflower.png"
+      },
+
+      {
+        id: 19,
+        name: "Silent Princess",
+        price: 41,
+        category: "PREMIUM",
+        img: baseUrl + "silentprincess.png"
+      },
+
+      {
+        id: 20,
+        name: "Lewisia",
+        price: 41,
+        category: "PREMIUM",
+        img: baseUrl + "lewisia.png"
+      },
+
+      {
+        id: 21,
+        name: "Iris",
+        price: 38,
+        category: "PREMIUM",
+        img: baseUrl + "iris.png"
+      },
+
+      {
+        id: 22,
+        name: "Lily",
+        price: 38,
+        category: "PREMIUM",
+        img: baseUrl + "lily.png"
+      },
+
+
+      /* SPROUTS */
+
+      {
+        id: 23,
+        name: "Larkspur",
+        price: 43,
+        category: "SPROUTS",
+        img: baseUrl + "larkspur.png"
+      },
+
+      {
+        id: 24,
+        name: "Forsythia",
+        price: 42,
+        category: "SPROUTS",
+        img: baseUrl + "forsythia.png"
+      },
+
+      {
+        id: 25,
+        name: "Ipomoea",
+        price: 42,
+        category: "SPROUTS",
+        img: baseUrl + "Ipomoea.png"
+      },
+
+      {
+        id: 26,
+        name: "Spray Rose",
+        price: 43,
+        category: "SPROUTS",
+        img: baseUrl + "sprayrose.png"
+      },
+
+      {
+        id: 27,
+        name: "Sakura",
+        price: 41,
+        category: "SPROUTS",
+        img: baseUrl + "sakura.png"
+      },
+
+      {
+        id: 28,
+        name: "Cherry Blossom",
+        price: 41,
+        category: "SPROUTS",
+        img: baseUrl + "cherryblossom.png"
+      },
+
+      {
+        id: 29,
+        name: "Star Lily",
+        price: 41,
+        category: "SPROUTS",
+        img: baseUrl + "starlily.png"
+      },
+
+      {
+        id: 30,
+        name: "Gladiolus",
+        price: 39,
+        category: "SPROUTS",
+        img: baseUrl + "gladiolus.png"
+      },
+
+      {
+        id: 31,
+        name: "Heather",
+        price: 29,
+        category: "SPROUTS",
+        img: baseUrl + "heather.png"
+      },
+
+      {
+        id: 32,
+        name: "Forget-Me-Not",
+        price: 27,
+        category: "SPROUTS",
+        img: baseUrl + "forgetmenot.png"
+      },
+
+      {
+        id: 33,
+        name: "Lily of the Valley",
+        price: 39,
+        category: "SPROUTS",
+        img: baseUrl + "lilyofthevalley.png"
+      },
+
+
+      /* LEAVES */
+
+      {
+        id: 34,
+        name: "Eucalyptus",
+        price: 29,
+        category: "LEAVES",
+        img: baseUrl + "eucalyptus.png"
+      },
+
+      {
+        id: 35,
+        name: "Botanical Leaf",
+        price: 30,
+        category: "LEAVES",
+        img: baseUrl + "botanicalleaf.png"
+      },
+
+      {
+        id: 36,
+        name: "Monstera Leaf",
+        price: 31,
+        category: "LEAVES",
+        img: baseUrl + "monsteraleaf.png"
+      }
+
+    ];
+
+
+    /* =========================================================
+       APP STATE
+       ========================================================= */
+
+    let selectedFlowers = [];
+
+    let currentCategory = "ALL";
+
+    let currentMode = "flowers";
+
+    /*
+      manualAdjustment stores any difference created by
+      the Standard Calculator.
+
+      Example:
+
+      Flower total = 100
+      Standard calculation = 100 + 20 = 120
+
+      manualAdjustment = 20
+    */
+
+    let manualAdjustment = 0;
+
+
+    /*
+      Expression currently visible in Standard Calc.
+    */
+
+    let calcExpression = "";
+
+
+    /*
+      Used to remember what total existed when Standard Calc
+      was opened.
+
+      This lets History show both the bouquet formula AND
+      the numerical calculation.
+    */
+
+    let standardStartValue = 0;
+
+
+    /*
+      History stays in memory for the current browser session,
+      just like your original version.
+    */
+
+    let calculationHistory = [];
+
+
+    /*
+      Used for the little "Added to History" message.
+    */
+
+    let confirmationTimer = null;
+
+
+    /* =========================================================
+       BASIC CALCULATIONS
+       ========================================================= */
+
+    function getFlowerById(id) {
+      return flowers.find((flower) => flower.id === id);
+    }
+
+
+    function getFlowerTotal() {
+
+      return selectedFlowers.reduce((total, id) => {
+
+        const flower = getFlowerById(id);
+
+        if (!flower) {
+          return total;
         }
-        updateDisplay();
-      }
 
-      function getFlowerTotal() {
-        let total = 0;
-        selectedFlowers.forEach((id) => {
-          const flower = flowers.find((f) => f.id === id);
-          total += flower.price;
-        });
-        return total;
-      }
+        return total + flower.price;
 
-      function appendInput(val) {
-        if (calcExpression === 'Error') {
-          calcExpression = '';
+      }, 0);
+
+    }
+
+
+    function getTotalFlowerCount() {
+      return selectedFlowers.length;
+    }
+
+
+    function getGrandTotal() {
+      return getFlowerTotal() + manualAdjustment;
+    }
+
+
+    /* =========================================================
+       FLOWER COUNTS
+       ========================================================= */
+
+    function getFlowerCounts() {
+
+      const counts = {};
+
+      selectedFlowers.forEach((id) => {
+
+        if (!counts[id]) {
+          counts[id] = 0;
         }
-        calcExpression += val;
-        updateDisplay();
-      }
 
-      function clearCalc() {
-        manualBase = 0;
-        calcExpression = String(getFlowerTotal());
-        updateDisplay();
-      }
+        counts[id]++;
 
-      function backspaceInput() {
-        if (calcExpression.length > 0) {
-          calcExpression = calcExpression.slice(0, -1);
-        }
-        updateDisplay();
-      }
+      });
 
-      function calculateResult() {
-        try {
-          let originalExpr = calcExpression;
-          let sanitized = calcExpression.replace(/×/g, '*').replace(/÷/g, '/');
-          let result = eval(sanitized);
-          if (isFinite(result)) {
-            let fTotal = getFlowerTotal();
-            manualBase = Number(result) - fTotal;
-            
-            let historyEntry = `${originalExpr} = ${result} QAR`;
-            if (calculationHistory.length === 0 || calculationHistory[0].result !== historyEntry) {
-              calculationHistory.unshift({ expr: originalExpr, result: result + ' QAR' });
-              if (calculationHistory.length > 15) calculationHistory.pop();
-            }
+      return counts;
 
-            calcExpression = String(result);
+    }
+
+
+    /* =========================================================
+       FORMULA BUILDING
+       ========================================================= */
+
+    /*
+      Makes the readable formula that will be saved to History.
+
+      Example:
+
+      2 × Daisy @ 23 QAR + 1 × Tulip @ 30 QAR
+    */
+
+    function buildFlowerFormula() {
+
+      const counts = getFlowerCounts();
+
+      const parts = [];
+
+
+      flowers.forEach((flower) => {
+
+        const quantity = counts[flower.id] || 0;
+
+        if (quantity > 0) {
+
+          if (quantity === 1) {
+
+            parts.push(
+              `${flower.name} (${flower.price} QAR)`
+            );
+
           } else {
-            calcExpression = 'Error';
+
+            const lineTotal = quantity * flower.price;
+
+            parts.push(
+              `${quantity} × ${flower.name} @ ${flower.price} QAR (${lineTotal} QAR)`
+            );
+
           }
-        } catch (e) {
-          calcExpression = 'Error';
+
         }
+
+      });
+
+
+      if (parts.length === 0) {
+
+        if (manualAdjustment !== 0) {
+          return formatAdjustmentForFormula(manualAdjustment);
+        }
+
+        return "No flowers selected";
+
+      }
+
+
+      let formula = parts.join(" + ");
+
+
+      if (manualAdjustment !== 0) {
+
+        formula +=
+          manualAdjustment > 0
+            ? ` + ${formatNumber(manualAdjustment)} QAR adjustment`
+            : ` − ${formatNumber(Math.abs(manualAdjustment))} QAR adjustment`;
+
+      }
+
+
+      return formula;
+    }
+
+
+    function formatAdjustmentForFormula(value) {
+
+      if (value >= 0) {
+        return `${formatNumber(value)} QAR adjustment`;
+      }
+
+      return `−${formatNumber(Math.abs(value))} QAR adjustment`;
+    }
+
+
+    /*
+      Converts calculator symbols into nicer History symbols.
+    */
+
+    function formatStandardExpression(expression) {
+
+      if (!expression) {
+        return "";
+      }
+
+      return expression
+        .replace(/\*/g, " × ")
+        .replace(/\//g, " ÷ ")
+        .replace(/\+/g, " + ")
+        .replace(/-/g, " − ")
+        .replace(/\s+/g, " ")
+        .trim();
+
+    }
+
+
+    /* =========================================================
+       MODE SWITCHING
+       ========================================================= */
+
+    function switchMode(mode) {
+
+      currentMode = mode;
+
+
+      const flowerView =
+        document.getElementById("flowerView");
+
+      const standardView =
+        document.getElementById("standardView");
+
+      const flowerBtn =
+        document.getElementById("flowerModeBtn");
+
+      const standardBtn =
+        document.getElementById("standardModeBtn");
+
+
+      if (mode === "flowers") {
+
+        flowerView.classList.add("active");
+
+        standardView.classList.remove("active");
+
+        flowerBtn.classList.add("active");
+
+        standardBtn.classList.remove("active");
+
+
+        /*
+          Like your old calculator, when we return to Flower Mode,
+          the displayed value becomes the current combined total.
+        */
+
+        calcExpression =
+          String(formatNumber(getGrandTotal()));
+
+      } else {
+
+        standardView.classList.add("active");
+
+        flowerView.classList.remove("active");
+
+        standardBtn.classList.add("active");
+
+        flowerBtn.classList.remove("active");
+
+
+        /*
+          Start Standard Calc from the current bouquet/grand total.
+        */
+
+        standardStartValue = getGrandTotal();
+
+        calcExpression =
+          String(formatNumber(standardStartValue));
+
+      }
+
+
+      updateDisplay();
+    }
+
+
+    /* =========================================================
+       FLOWER GRID
+       ========================================================= */
+
+    function renderFlowers() {
+
+      const grid =
+        document.getElementById("flowerGrid");
+
+      grid.innerHTML = "";
+
+
+      const filteredFlowers =
+        currentCategory === "ALL"
+          ? flowers
+          : flowers.filter(
+              (flower) =>
+                flower.category === currentCategory
+            );
+
+
+      const counts = getFlowerCounts();
+
+
+      filteredFlowers.forEach((flower) => {
+
+        const count =
+          counts[flower.id] || 0;
+
+
+        const card =
+          document.createElement("div");
+
+        card.className =
+          "flower-card";
+
+        card.onclick =
+          () => addFlower(flower.id);
+
+
+        card.innerHTML = `
+
+          ${
+            count > 0
+              ? `<div class="badge">${count}</div>`
+              : ""
+          }
+
+          <div class="flower-img-container">
+
+            <img
+              src="${flower.img}"
+              alt="${flower.name}"
+              class="flower-img"
+              onerror="this.src='https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=150'"
+            />
+
+          </div>
+
+          <div class="flower-name">
+            ${flower.name}
+          </div>
+
+          <div class="flower-price">
+            ${flower.price} QAR
+          </div>
+
+        `;
+
+
+        grid.appendChild(card);
+
+      });
+
+    }
+
+
+    /* =========================================================
+       CATEGORY FILTER
+       ========================================================= */
+
+    function filterCategory(category) {
+
+      currentCategory = category;
+
+
+      document
+        .querySelectorAll(".tab-btn")
+        .forEach((button) => {
+
+          button.classList.toggle(
+            "active",
+            button.dataset.category === category
+          );
+
+        });
+
+
+      renderFlowers();
+    }
+
+
+    /* =========================================================
+       ADD / REMOVE FLOWERS
+       ========================================================= */
+
+    function addFlower(id) {
+
+      selectedFlowers.push(id);
+
+
+      /*
+        A flower changes the flower portion of the total,
+        but keeps any existing Standard Calculator adjustment.
+      */
+
+      calcExpression =
+        String(formatNumber(getGrandTotal()));
+
+
+      updateDisplay();
+
+      renderFlowers();
+    }
+
+
+    function undoLast() {
+
+      if (selectedFlowers.length === 0) {
+        return;
+      }
+
+
+      selectedFlowers.pop();
+
+
+      calcExpression =
+        String(formatNumber(getGrandTotal()));
+
+
+      updateDisplay();
+
+      renderFlowers();
+    }
+
+
+    /* =========================================================
+       COMPLETE FLOWER CALCULATION
+       ========================================================= */
+
+    function completeFlowerCalculation() {
+
+      /*
+        Don't save a completely empty calculation.
+      */
+
+      if (
+        selectedFlowers.length === 0 &&
+        manualAdjustment === 0
+      ) {
+
+        showConfirmation(
+          "Add flowers before completing"
+        );
+
+        return;
+      }
+
+
+      const total =
+        getGrandTotal();
+
+
+      const historyEntry = {
+
+        type: "Bouquet",
+
+        flowerFormula:
+          buildFlowerFormula(),
+
+        standardFormula: null,
+
+        flowerCount:
+          getTotalFlowerCount(),
+
+        result:
+          total
+
+      };
+
+
+      addHistoryEntry(historyEntry);
+
+
+      showConfirmation(
+        "✓ Bouquet added to History"
+      );
+    }
+
+
+    /* =========================================================
+       STANDARD CALCULATOR INPUT
+       ========================================================= */
+
+    function appendInput(value) {
+
+      if (calcExpression === "Error") {
+        calcExpression = "";
+      }
+
+
+      /*
+        If the display is currently blank, allow normal entry.
+      */
+
+      calcExpression += value;
+
+
+      updateDisplay();
+    }
+
+
+    function backspaceInput() {
+
+      if (calcExpression === "Error") {
+
+        calcExpression = "";
+
         updateDisplay();
+
+        return;
+
       }
 
-      function toggleHistory(show) {
-        const modal = document.getElementById('historyModal');
-        if (show) {
-          renderHistoryList();
-          modal.classList.add('active');
-        } else {
-          modal.classList.remove('active');
+
+      if (calcExpression.length > 0) {
+
+        calcExpression =
+          calcExpression.slice(0, -1);
+
+      }
+
+
+      updateDisplay();
+    }
+
+
+    function clearCalc() {
+
+      /*
+        C resets the Standard Calc portion back to the flower total.
+        Flowers themselves remain selected.
+      */
+
+      manualAdjustment = 0;
+
+      standardStartValue =
+        getFlowerTotal();
+
+      calcExpression =
+        String(formatNumber(getFlowerTotal()));
+
+
+      updateDisplay();
+    }
+
+
+    /* =========================================================
+       STANDARD CALCULATOR =
+       ========================================================= */
+
+    function calculateResult() {
+
+      try {
+
+        if (
+          !calcExpression ||
+          calcExpression === "Error"
+        ) {
+
+          return;
+
         }
+
+
+        const originalExpression =
+          calcExpression;
+
+
+        /*
+          Only numbers and normal arithmetic operators are accepted.
+        */
+
+        const sanitized =
+          originalExpression
+            .replace(/×/g, "*")
+            .replace(/÷/g, "/");
+
+
+        const isValidExpression =
+          /^[0-9+\-*/().\s]+$/.test(sanitized);
+
+
+        if (!isValidExpression) {
+
+          throw new Error(
+            "Invalid calculator expression"
+          );
+
+        }
+
+
+        /*
+          Evaluate the mathematical expression.
+        */
+
+        const result =
+          Function(
+            `"use strict"; return (${sanitized})`
+          )();
+
+
+        if (
+          typeof result !== "number" ||
+          !Number.isFinite(result)
+        ) {
+
+          throw new Error(
+            "Invalid result"
+          );
+
+        }
+
+
+        const roundedResult =
+          roundNumber(result);
+
+
+        const flowerTotal =
+          getFlowerTotal();
+
+
+        /*
+          This preserves the link between Flower Mode and
+          Standard Calc.
+
+          Example:
+
+          Flowers = 100
+          Standard result = 120
+          Adjustment = +20
+
+          Returning to Flower Mode still shows 120.
+        */
+
+        manualAdjustment =
+          roundNumber(
+            roundedResult - flowerTotal
+          );
+
+
+        /*
+          FULL HISTORY ENTRY
+
+          We save:
+          - bouquet formula
+          - standard calculator formula
+          - number of flowers
+          - final result
+        */
+
+        const historyEntry = {
+
+          type:
+            selectedFlowers.length > 0
+              ? "Bouquet + Calculator"
+              : "Standard Calculator",
+
+          flowerFormula:
+            selectedFlowers.length > 0
+              ? buildFlowerFormulaWithoutAdjustment()
+              : null,
+
+          standardFormula:
+            formatStandardExpression(
+              originalExpression
+            ),
+
+          flowerCount:
+            getTotalFlowerCount(),
+
+          result:
+            roundedResult
+
+        };
+
+
+        addHistoryEntry(historyEntry);
+
+
+        calcExpression =
+          String(
+            formatNumber(roundedResult)
+          );
+
+
+        standardStartValue =
+          roundedResult;
+
+
+        updateDisplay();
+
+
+        showConfirmation(
+          "✓ Calculation added to History"
+        );
+
+      } catch (error) {
+
+        calcExpression = "Error";
+
+        updateDisplay();
+
       }
 
-      function renderHistoryList() {
-        const listContainer = document.getElementById('historyList');
-        listContainer.innerHTML = '';
+    }
 
-        if (calculationHistory.length === 0) {
-          listContainer.innerHTML = '<div class="empty-history">No recent calculations yet</div>';
+
+    /*
+      For a Standard Calculator history entry,
+      show the underlying flowers without duplicating
+      the final adjustment.
+    */
+
+    function buildFlowerFormulaWithoutAdjustment() {
+
+      const counts =
+        getFlowerCounts();
+
+      const parts = [];
+
+
+      flowers.forEach((flower) => {
+
+        const quantity =
+          counts[flower.id] || 0;
+
+
+        if (quantity <= 0) {
           return;
         }
 
-        calculationHistory.forEach(item => {
-          const row = document.createElement('div');
-          row.className = 'history-item';
-          row.innerHTML = `
-            <span class="history-expr">${item.expr}</span>
-            <span class="history-res">${item.result}</span>
-          `;
-          listContainer.appendChild(row);
-        });
-      }
 
-      function filterCategory(category) {
-        currentCategory = category;
-        document.querySelectorAll('.tab-btn').forEach((btn) => {
-          btn.classList.remove('active');
-          if (btn.innerText.toUpperCase().includes(category.split(' ')[0])) {
-            btn.classList.add('active');
-          }
-        });
-        if (category === 'ALL') {
-          document.querySelector('.tab-btn').classList.add('active');
-        }
-        renderFlowers();
-      }
+        if (quantity === 1) {
 
-      function renderFlowers() {
-        const grid = document.getElementById('flowerGrid');
-        grid.innerHTML = '';
+          parts.push(
+            `${flower.name} (${flower.price} QAR)`
+          );
 
-        const filteredFlowers =
-          currentCategory === 'ALL'
-            ? flowers
-            : flowers.filter((f) => f.category === currentCategory);
-
-        filteredFlowers.forEach((flower) => {
-          const count = selectedFlowers.filter((id) => id === flower.id).length;
-          const card = document.createElement('div');
-          card.className = 'flower-card';
-          card.onclick = () => addFlower(flower.id);
-
-          card.innerHTML = `
-                ${count > 0 ? `<div class="badge">${count}</div>` : ''}
-                <div class="flower-img-container">
-                  <img src="${flower.img}" alt="${flower.name}" class="flower-img" onerror="this.src='https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=150'">
-                </div>
-                <div class="flower-name">${flower.name}</div>
-                <div class="flower-price">${flower.price} QAR</div>
-            `;
-          grid.appendChild(card);
-        });
-      }
-
-      function addFlower(id) {
-        selectedFlowers.push(id);
-        let grandTotal = getFlowerTotal() + manualBase;
-        calcExpression = String(grandTotal);
-        updateDisplay();
-        renderFlowers();
-      }
-
-      function undoLast() {
-        if (selectedFlowers.length > 0) {
-          selectedFlowers.pop();
-          let grandTotal = getFlowerTotal() + manualBase;
-          calcExpression = String(grandTotal);
-          updateDisplay();
-          renderFlowers();
-        }
-      }
-
-      function resetAll() {
-        selectedFlowers = [];
-        manualBase = 0;
-        calcExpression = '';
-        updateDisplay();
-        renderFlowers();
-      }
-
-      function updateDisplay() {
-        let flowerTotal = getFlowerTotal();
-        let grandTotal = flowerTotal + manualBase;
-        let summaryCounts = {};
-
-        selectedFlowers.forEach((id) => {
-          const flower = flowers.find((f) => f.id === id);
-          summaryCounts[flower.name] = (summaryCounts[flower.name] || 0) + 1;
-        });
-
-        if (currentMode === 'flowers') {
-          document.getElementById('displayLabel').innerText = 'Bouquet Total';
-          document.getElementById('totalDisplay').innerText = grandTotal + ' QAR';
-          calcExpression = String(grandTotal);
         } else {
-          document.getElementById('displayLabel').innerText = 'Standard Calculator';
-          document.getElementById('totalDisplay').innerText = (calcExpression !== '' ? calcExpression : grandTotal) + ' QAR';
+
+          const subtotal =
+            quantity * flower.price;
+
+          parts.push(
+            `${quantity} × ${flower.name} @ ${flower.price} QAR (${subtotal} QAR)`
+          );
+
         }
 
-        const summaryArray = Object.keys(summaryCounts).map(
-          (name) => `${summaryCounts[name]}x ${name}`
-        );
-        let summaryText = summaryArray.length > 0 ? summaryArray.join(' + ') : 'Tap flowers below to add';
-        if (manualBase !== 0) {
-          summaryText += summaryArray.length > 0 ? ` (Custom Adj: ${manualBase > 0 ? '+' + manualBase : manualBase} QAR)` : `Custom Value (${manualBase} QAR)`;
-        }
-        document.getElementById('itemsSummary').innerText = summaryText;
+      });
+
+
+      return parts.length > 0
+        ? parts.join(" + ")
+        : null;
+
+    }
+
+
+    /* =========================================================
+       HISTORY
+       ========================================================= */
+
+    function addHistoryEntry(entry) {
+
+      /*
+        Prevent accidentally adding the exact same completed
+        calculation twice in a row.
+      */
+
+      const entryKey =
+        JSON.stringify(entry);
+
+
+      const firstEntryKey =
+        calculationHistory.length > 0
+          ? JSON.stringify(calculationHistory[0])
+          : null;
+
+
+      if (entryKey === firstEntryKey) {
+        return;
       }
+
+
+      calculationHistory.unshift(entry);
+
+
+      /*
+        Keep the latest 20 calculations.
+      */
+
+      if (calculationHistory.length > 20) {
+        calculationHistory.pop();
+      }
+
+    }
+
+
+    function toggleHistory(show) {
+
+      const modal =
+        document.getElementById("historyModal");
+
+
+      if (show) {
+
+        renderHistoryList();
+
+        modal.classList.add("active");
+
+      } else {
+
+        modal.classList.remove("active");
+
+      }
+
+    }
+
+
+    function closeHistoryFromBackdrop(event) {
+
+      if (
+        event.target.id === "historyModal"
+      ) {
+
+        toggleHistory(false);
+
+      }
+
+    }
+
+
+    function renderHistoryList() {
+
+      const list =
+        document.getElementById("historyList");
+
+
+      list.innerHTML = "";
+
+
+      if (
+        calculationHistory.length === 0
+      ) {
+
+        list.innerHTML = `
+          <div class="empty-history">
+            No recent calculations yet
+          </div>
+        `;
+
+        return;
+
+      }
+
+
+      calculationHistory.forEach(
+        (item) => {
+
+          const card =
+            document.createElement("div");
+
+          card.className =
+            "history-item";
+
+
+          /*
+            TOP LINE
+          */
+
+          const top =
+            document.createElement("div");
+
+          top.className =
+            "history-item-top";
+
+
+          const type =
+            document.createElement("div");
+
+          type.className =
+            "history-type";
+
+          type.textContent =
+            item.type;
+
+
+          const count =
+            document.createElement("div");
+
+          count.className =
+            "history-count";
+
+          count.textContent =
+            `${item.flowerCount} ${
+              item.flowerCount === 1
+                ? "Flower"
+                : "Flowers"
+            }`;
+
+
+          top.appendChild(type);
+
+          top.appendChild(count);
+
+          card.appendChild(top);
+
+
+          /*
+            FLOWER FORMULA
+          */
+
+          if (item.flowerFormula) {
+
+            const formulaLabel =
+              document.createElement("div");
+
+            formulaLabel.className =
+              "history-formula-label";
+
+            formulaLabel.textContent =
+              "Flower Formula";
+
+
+            const flowerFormula =
+              document.createElement("div");
+
+            flowerFormula.className =
+              "history-formula";
+
+            flowerFormula.textContent =
+              item.flowerFormula;
+
+
+            card.appendChild(
+              formulaLabel
+            );
+
+            card.appendChild(
+              flowerFormula
+            );
+
+          }
+
+
+          /*
+            STANDARD CALCULATOR FORMULA
+          */
+
+          if (item.standardFormula) {
+
+            const standardArea =
+              document.createElement("div");
+
+            standardArea.className =
+              "history-standard-formula";
+
+
+            const standardLabel =
+              document.createElement("div");
+
+            standardLabel.className =
+              "history-formula-label";
+
+            standardLabel.textContent =
+              "Calculation";
+
+
+            const standardFormula =
+              document.createElement("div");
+
+            standardFormula.className =
+              "history-formula";
+
+            standardFormula.textContent =
+              `${item.standardFormula} = ${formatNumber(item.result)}`;
+
+
+            standardArea.appendChild(
+              standardLabel
+            );
+
+            standardArea.appendChild(
+              standardFormula
+            );
+
+            card.appendChild(
+              standardArea
+            );
+
+          }
+
+
+          /*
+            RESULT
+          */
+
+          const result =
+            document.createElement("div");
+
+          result.className =
+            "history-result";
+
+
+          const resultLabel =
+            document.createElement("div");
+
+          resultLabel.className =
+            "history-result-label";
+
+          resultLabel.textContent =
+            "Total";
+
+
+          const resultValue =
+            document.createElement("div");
+
+          resultValue.className =
+            "history-result-value";
+
+          resultValue.textContent =
+            `${formatNumber(item.result)} QAR`;
+
+
+          result.appendChild(
+            resultLabel
+          );
+
+          result.appendChild(
+            resultValue
+          );
+
+
+          card.appendChild(result);
+
+
+          list.appendChild(card);
+
+        }
+      );
+
+    }
+
+
+    /* =========================================================
+       DISPLAY UPDATE
+       ========================================================= */
+
+    function updateDisplay() {
+
+      const flowerTotal =
+        getFlowerTotal();
+
+      const grandTotal =
+        getGrandTotal();
+
+      const flowerCount =
+        getTotalFlowerCount();
+
+
+      const displayLabel =
+        document.getElementById(
+          "displayLabel"
+        );
+
+      const totalDisplay =
+        document.getElementById(
+          "totalDisplay"
+        );
+
+      const itemsSummary =
+        document.getElementById(
+          "itemsSummary"
+        );
+
+      const flowerCountNumber =
+        document.getElementById(
+          "flowerCountNumber"
+        );
+
+
+      /*
+        Always show the number of flowers,
+        even when the Standard Calculator is open.
+      */
+
+      flowerCountNumber.textContent =
+        flowerCount;
+
+
+      /*
+        Build short live bouquet summary.
+
+        Example:
+        2x Daisy + 1x Tulip
+      */
+
+      const counts =
+        getFlowerCounts();
+
+      const summary = [];
+
+
+      flowers.forEach((flower) => {
+
+        const quantity =
+          counts[flower.id] || 0;
+
+
+        if (quantity > 0) {
+
+          summary.push(
+            `${quantity}x ${flower.name}`
+          );
+
+        }
+
+      });
+
+
+      let summaryText =
+        summary.length > 0
+          ? summary.join(" + ")
+          : "Tap flowers below to add";
+
+
+      if (manualAdjustment !== 0) {
+
+        const sign =
+          manualAdjustment > 0
+            ? "+"
+            : "−";
+
+
+        summaryText +=
+          ` • Adj: ${sign}${formatNumber(
+            Math.abs(manualAdjustment)
+          )} QAR`;
+
+      }
+
+
+      itemsSummary.textContent =
+        summaryText;
+
+
+      /*
+        FLOWER MODE DISPLAY
+      */
+
+      if (currentMode === "flowers") {
+
+        displayLabel.textContent =
+          "Bouquet Total";
+
+        totalDisplay.textContent =
+          `${formatNumber(grandTotal)} QAR`;
+
+        calcExpression =
+          String(
+            formatNumber(grandTotal)
+          );
+
+      }
+
+      /*
+        STANDARD MODE DISPLAY
+      */
+
+      else {
+
+        displayLabel.textContent =
+          "Standard Calculator";
+
+
+        if (
+          calcExpression === "Error"
+        ) {
+
+          totalDisplay.textContent =
+            "Error";
+
+        } else {
+
+          const visibleValue =
+            calcExpression !== ""
+              ? formatStandardExpression(
+                  calcExpression
+                )
+              : formatNumber(grandTotal);
+
+
+          totalDisplay.textContent =
+            `${visibleValue} QAR`;
+
+        }
+
+      }
+
+    }
+
+
+    /* =========================================================
+       RESET
+       ========================================================= */
+
+    function resetAll() {
+
+      selectedFlowers = [];
+
+      manualAdjustment = 0;
+
+      calcExpression = "";
+
+      standardStartValue = 0;
+
+
+      updateDisplay();
 
       renderFlowers();
-    </script>
-  </body>
+
+    }
+
+
+    /* =========================================================
+       NUMBER FORMATTING
+       ========================================================= */
+
+    function roundNumber(value) {
+
+      return Math.round(
+        (Number(value) + Number.EPSILON) * 100
+      ) / 100;
+
+    }
+
+
+    function formatNumber(value) {
+
+      const number =
+        roundNumber(value);
+
+
+      if (Number.isInteger(number)) {
+
+        return String(number);
+
+      }
+
+
+      return String(number);
+
+    }
+
+
+    /* =========================================================
+       CONFIRMATION MESSAGE
+       ========================================================= */
+
+    function showConfirmation(message) {
+
+      const element =
+        document.getElementById(
+          "completeMessage"
+        );
+
+
+      element.textContent =
+        message;
+
+
+      element.classList.add(
+        "show"
+      );
+
+
+      if (confirmationTimer) {
+
+        clearTimeout(
+          confirmationTimer
+        );
+
+      }
+
+
+      confirmationTimer =
+        setTimeout(() => {
+
+          element.classList.remove(
+            "show"
+          );
+
+        }, 1400);
+
+    }
+
+
+    /* =========================================================
+       INITIAL LOAD
+       ========================================================= */
+
+    renderFlowers();
+
+    updateDisplay();
+
+  </script>
+
+</body>
 </html>
