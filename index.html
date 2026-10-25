@@ -850,14 +850,14 @@
         'https://raw.githubusercontent.com/del-elatum/flowercal/refs/heads/main/';
 
 
+      // Flower catalogue: change prices and image URLs here; all calculator behavior is unchanged.
       const flowers = [
 
         // BASE
-
         {
           id: 1,
-          name: 'Daisy',
-          price: 23,
+          name: 'Small Daisy',
+          price: 25,
           category: 'BASE',
           img: baseUrl + 'daisy.png'
         },
@@ -865,30 +865,30 @@
         {
           id: 2,
           name: 'Garden Rose',
-          price: 30,
+          price: 33,
           category: 'BASE',
           img: baseUrl + 'gardenrose.png'
         },
 
         {
           id: 3,
-          name: 'Tulip',
-          price: 30,
+          name: 'Bud Tulip',
+          price: 32,
           category: 'BASE',
           img: baseUrl + 'tulip.png'
         },
 
         {
           id: 4,
-          name: 'Carnation',
-          price: 30,
+          name: 'Carnations',
+          price: 32,
           category: 'BASE',
           img: baseUrl + 'carnation.png'
         },
 
         {
           id: 5,
-          name: 'Long-Stem Rose',
+          name: 'Long Stem Rose',
           price: 38,
           category: 'BASE',
           img: baseUrl + 'longstemrose.png'
@@ -905,7 +905,7 @@
         {
           id: 7,
           name: 'Calla Lily',
-          price: 29,
+          price: 30,
           category: 'BASE',
           img: baseUrl + 'callalily.png'
         },
@@ -913,14 +913,14 @@
         {
           id: 8,
           name: 'Lavender',
-          price: 29,
+          price: 30,
           category: 'BASE',
           img: baseUrl + 'lavender.png'
         },
 
         {
           id: 9,
-          name: 'Toy',
+          name: 'Other Toys',
           price: 38,
           category: 'BASE',
           img: baseUrl + 'toy.png'
@@ -934,19 +934,58 @@
           img: baseUrl + 'graduationgirl.png'
         },
 
-
-        // PREMIUM
-
         {
           id: 11,
+          name: 'Bunny',
+          price: 38,
+          category: 'BASE',
+          img: 'PASTE_IMAGE_URL_HERE'
+        },
+
+        {
+          id: 12,
+          name: 'Heart',
+          price: 30,
+          category: 'BASE',
+          img: 'PASTE_IMAGE_URL_HERE'
+        },
+
+        {
+          id: 13,
+          name: 'Petal Tulip',
+          price: 32,
+          category: 'BASE',
+          img: 'PASTE_IMAGE_URL_HERE'
+        },
+
+        {
+          id: 14,
+          name: 'Butterfly',
+          price: 38,
+          category: 'BASE',
+          img: 'PASTE_IMAGE_URL_HERE'
+        },
+
+        {
+          id: 15,
+          name: 'Geum',
+          price: 30,
+          category: 'BASE',
+          img: 'PASTE_IMAGE_URL_HERE'
+        },
+
+
+        // PREMIUM
+        {
+          id: 16,
           name: 'Poppy',
-          price: 39,
+          price: 40,
           category: 'PREMIUM',
           img: baseUrl + 'poppy.png'
         },
 
         {
-          id: 12,
+          id: 17,
           name: 'Daylily',
           price: 43,
           category: 'PREMIUM',
@@ -954,7 +993,7 @@
         },
 
         {
-          id: 13,
+          id: 18,
           name: 'Large Rose',
           price: 43,
           category: 'PREMIUM',
@@ -962,7 +1001,7 @@
         },
 
         {
-          id: 14,
+          id: 19,
           name: 'Water Lily',
           price: 40,
           category: 'PREMIUM',
@@ -970,23 +1009,23 @@
         },
 
         {
-          id: 15,
+          id: 20,
           name: 'Large Daisy',
-          price: 43,
+          price: 44,
           category: 'PREMIUM',
           img: baseUrl + 'largedaisy.png'
         },
 
         {
-          id: 16,
+          id: 21,
           name: 'Sunflower',
-          price: 41,
+          price: 43,
           category: 'PREMIUM',
           img: baseUrl + 'sunflower.png'
         },
 
         {
-          id: 17,
+          id: 22,
           name: 'Silk Flower',
           price: 41,
           category: 'PREMIUM',
@@ -994,23 +1033,7 @@
         },
 
         {
-          id: 18,
-          name: 'Glaze Flower',
-          price: 41,
-          category: 'PREMIUM',
-          img: baseUrl + 'glazeflower.png'
-        },
-
-        {
-          id: 19,
-          name: 'Silent Princess',
-          price: 41,
-          category: 'PREMIUM',
-          img: baseUrl + 'silentprincess.png'
-        },
-
-        {
-          id: 20,
+          id: 23,
           name: 'Lewisia',
           price: 41,
           category: 'PREMIUM',
@@ -1018,26 +1041,33 @@
         },
 
         {
-          id: 21,
+          id: 24,
           name: 'Iris',
-          price: 38,
+          price: 39,
           category: 'PREMIUM',
           img: baseUrl + 'iris.png'
         },
 
         {
-          id: 22,
+          id: 25,
           name: 'Lily',
-          price: 38,
+          price: 40,
           category: 'PREMIUM',
           img: baseUrl + 'lily.png'
         },
 
+        {
+          id: 26,
+          name: 'Aquilegia',
+          price: 41,
+          category: 'PREMIUM',
+          img: 'PASTE_IMAGE_URL_HERE'
+        },
+
 
         // SPROUTS
-
         {
-          id: 23,
+          id: 27,
           name: 'Larkspur',
           price: 43,
           category: 'SPROUTS',
@@ -1045,7 +1075,7 @@
         },
 
         {
-          id: 24,
+          id: 28,
           name: 'Forsythia',
           price: 42,
           category: 'SPROUTS',
@@ -1053,7 +1083,7 @@
         },
 
         {
-          id: 25,
+          id: 29,
           name: 'Ipomoea',
           price: 42,
           category: 'SPROUTS',
@@ -1061,7 +1091,7 @@
         },
 
         {
-          id: 26,
+          id: 30,
           name: 'Spray Rose',
           price: 43,
           category: 'SPROUTS',
@@ -1069,7 +1099,7 @@
         },
 
         {
-          id: 27,
+          id: 31,
           name: 'Sakura',
           price: 41,
           category: 'SPROUTS',
@@ -1077,7 +1107,7 @@
         },
 
         {
-          id: 28,
+          id: 32,
           name: 'Cherry Blossom',
           price: 41,
           category: 'SPROUTS',
@@ -1085,7 +1115,7 @@
         },
 
         {
-          id: 29,
+          id: 33,
           name: 'Star Lily',
           price: 41,
           category: 'SPROUTS',
@@ -1093,7 +1123,7 @@
         },
 
         {
-          id: 30,
+          id: 34,
           name: 'Gladiolus',
           price: 39,
           category: 'SPROUTS',
@@ -1101,7 +1131,7 @@
         },
 
         {
-          id: 31,
+          id: 35,
           name: 'Heather',
           price: 29,
           category: 'SPROUTS',
@@ -1109,34 +1139,49 @@
         },
 
         {
-          id: 32,
-          name: 'Forget-Me-Not',
-          price: 27,
+          id: 36,
+          name: 'Forget-Me-Nots',
+          price: 30,
           category: 'SPROUTS',
           img: baseUrl + 'forgetmenot.png'
         },
 
         {
-          id: 33,
+          id: 37,
           name: 'Lily of the Valley',
           price: 39,
           category: 'SPROUTS',
           img: baseUrl + 'lilyofthevalley.png'
         },
 
-
-        // LEAVES
+        {
+          id: 38,
+          name: 'Blossom',
+          price: 43,
+          category: 'SPROUTS',
+          img: 'PASTE_IMAGE_URL_HERE'
+        },
 
         {
-          id: 34,
-          name: 'Eucalyptus',
-          price: 29,
+          id: 39,
+          name: 'Peruvian Daffodil',
+          price: 42,
+          category: 'SPROUTS',
+          img: 'PASTE_IMAGE_URL_HERE'
+        },
+
+
+        // LEAVES
+        {
+          id: 40,
+          name: 'Eucalyptus Leaf',
+          price: 30,
           category: 'LEAVES',
           img: baseUrl + 'eucalyptus.png'
         },
 
         {
-          id: 35,
+          id: 41,
           name: 'Botanical Leaf',
           price: 30,
           category: 'LEAVES',
@@ -1144,9 +1189,9 @@
         },
 
         {
-          id: 36,
+          id: 42,
           name: 'Monstera Leaf',
-          price: 31,
+          price: 32,
           category: 'LEAVES',
           img: baseUrl + 'monsteraleaf.png'
         }
